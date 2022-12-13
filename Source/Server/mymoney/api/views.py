@@ -60,6 +60,12 @@ def create_transaction(request):
     serializer = transactions_serializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
+        wallets_balance = wallets_balances.objects.get(wallet_id=serializer.data['wallet_id'])
+        if serializer.data['type_id'] == 1:
+            wallets_balance.balance = wallets_balance.balance + serializer.data['sum']
+        else:
+            wallets_balance.balance = wallets_balance.balance - serializer.data['sum']
+        wallets_balance.save(update_fields=['balance'])
     return Response(serializer.data)
 
 @api_view(['GET'])
