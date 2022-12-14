@@ -5,6 +5,13 @@ from .serializers import *
 
 #++wallets
 
+#@api_view(['POST'])
+#def delete_wallets_type(request):
+#    wallets_type = wallets_types.objects.get(pk=request.data['id'])
+#    wallets_type.delete()
+#    response = {"result":True}
+#    return Response(response)
+
 @api_view(['POST'])
 def create_wallets_type(request):
     serializer = wallets_types_serializer(data=request.data)
@@ -17,6 +24,13 @@ def get_wallets_types(request):
     wallets_types_list = wallets_types.objects.all()
     serializer = wallets_types_serializer(wallets_types_list,many=True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+def delete_wallet(request):
+    wallet = wallets.objects.get(pk=request.data['id'])
+    wallet.delete()
+    response = {"result":True}
+    return Response(response)
 
 @api_view(['POST'])
 def create_wallet(request):
@@ -54,6 +68,13 @@ def get_transactions_types(request):
     transactions_types_list = transactions_types.objects.all()
     serializer = transactions_types_serializer(transactions_types_list,many=True)
     return Response(serializer.data)
+
+@api_view(['POST'])
+def delete_transaction(request):
+    transaction = transactions.objects.get(pk=request.data['id'])
+    transaction.delete()
+    response = {"result":True}
+    return Response(response)
 
 @api_view(['POST'])
 def create_transaction(request):

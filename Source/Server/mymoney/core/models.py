@@ -8,7 +8,7 @@ class wallets(models.Model):
     type_id = models.ForeignKey(wallets_types,on_delete=models.RESTRICT)
 
 class wallets_balances(models.Model):
-    wallet_id = models.ForeignKey(wallets,on_delete=models.RESTRICT)
+    wallet_id = models.ForeignKey(wallets,on_delete=models.CASCADE)
     balance = models.IntegerField()
 
 class transactions_types(models.Model):
