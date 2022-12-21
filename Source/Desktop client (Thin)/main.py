@@ -1,4 +1,8 @@
+from Design import Ui_MainWindow
+from PyQt5 import QtWidgets
 import requests
+import sys
+
 
 # ++Common data
 server = "http://127.0.0.1:8000"
@@ -182,24 +186,44 @@ def setup():
     #
 # --Common functions
 
+# ++Interface
+class MainWindow(QtWidgets.QMainWindow):
+    def fill_data(self):
+        wallets = get_wallets()
+        for i in wallets:
+            self.ui.wallet.addItem(i.title)
+        transactions_types = get_transactions_types()
+        for i in transactions_types:
+            self.ui.operation_type.addItem(i.title)
+
+    def __init__(self):
+        super(MainWindow, self).__init__()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+        self.ui.create_transaction.clicked.connect(self.create_transaction)
+        self.fill_data()
+
+    def create_transaction(self):
+        new_transaction = transaction()
+        for i in get_transactions_types():
+            if i.title == self.ui.operation_type.currentText():
+                new_transaction.type_id = i.id
+        for i in get_wallets():
+            if i.title == self.ui.wallet.currentText():
+                new_transaction.wallet_id = i.id
+        new_transaction.sum = self.ui.summ.text()
+        new_transaction.create()
+        print(new_transaction.id)
+
+# --Interface
+
+# ++Main loop
+
 clear_base()
-# setup()
-# for i in get_transactions_types():
-#     if i.title == "income":
-#         income = i.id
-#     else:
-#         expense = i.id
-#
-# new_transaction = transaction()
-# new_transaction.type_id = income
-# new_transaction.wallet_id = get_wallets()[0].id
-# new_transaction.sum = 100
-# new_transaction.create()
-# #
-# new_transaction = transaction()
-# new_transaction.type_id = expense
-# new_transaction.wallet_id = get_wallets()[0].id
-# new_transaction.sum = 34
-# new_transaction.create()
-# #
-# get_transactions()[1].delete()
+setup()
+
+app = QtWidgets.QApplication([])
+MW = MainWindow()
+MW.show()
+sys.exit(app.exec())
+# --Main loop
