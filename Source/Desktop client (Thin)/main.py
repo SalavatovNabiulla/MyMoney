@@ -1,5 +1,5 @@
-from Design import Ui_MainWindow
 from PyQt5 import QtWidgets
+from forms import *
 import requests
 import sys
 
@@ -187,43 +187,24 @@ def setup():
 # --Common functions
 
 # ++Interface
-class MainWindow(QtWidgets.QMainWindow):
-    def fill_data(self):
-        wallets = get_wallets()
-        for i in wallets:
-            self.ui.wallet.addItem(i.title)
-        transactions_types = get_transactions_types()
-        for i in transactions_types:
-            self.ui.operation_type.addItem(i.title)
+class main_menu(QtWidgets.QMainWindow):
 
     def __init__(self):
-        super(MainWindow, self).__init__()
-        self.ui = Ui_MainWindow()
+        super(main_menu, self).__init__()
+        self.ui = Ui_main_menu_window()
         self.ui.setupUi(self)
-        self.ui.create_transaction.clicked.connect(self.create_transaction)
-        self.fill_data()
 
-    def create_transaction(self):
-        new_transaction = transaction()
-        for i in get_transactions_types():
-            if i.title == self.ui.operation_type.currentText():
-                new_transaction.type_id = i.id
-        for i in get_wallets():
-            if i.title == self.ui.wallet.currentText():
-                new_transaction.wallet_id = i.id
-        new_transaction.sum = self.ui.summ.text()
-        new_transaction.create()
-        print(new_transaction.id)
+
 
 # --Interface
 
 # ++Main loop
 
-clear_base()
-setup()
+# clear_base()
+# setup()
 
 app = QtWidgets.QApplication([])
-MW = MainWindow()
+MW = main_menu()
 MW.show()
 sys.exit(app.exec())
 # --Main loop
