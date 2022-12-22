@@ -143,16 +143,6 @@ class Ui_transaction_window(object):
         self.wallet_label.setText(_translate("transaction_window", "Кошелёк:"))
         self.id_label.setText(_translate("transaction_window", "ID:"))
 
-
-    def retranslateUi(self, new_transaction_window):
-        _translate = QtCore.QCoreApplication.translate
-        new_transaction_window.setWindowTitle(_translate("new_transaction_window", "MainWindow"))
-        self.new_transaction_label.setText(_translate("new_transaction_window", "Новая транзакция"))
-        self.save_button.setText(_translate("new_transaction_window", "Сохранить"))
-        self.summ_label.setText(_translate("new_transaction_window", "Сумма:"))
-        self.transaction_type_label.setText(_translate("new_transaction_window", "Вид транзакции:"))
-        self.wallet_label.setText(_translate("new_transaction_window", "Кошелёк:"))
-
 class Ui_wallet_window(object):
     def setupUi(self, wallet_window):
         wallet_window.setObjectName("wallet_window")

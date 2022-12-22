@@ -180,10 +180,55 @@ def setup():
 # ++Interface
 class transactions_window(QtWidgets.QMainWindow):
 
+    def __create_transaction(self):
+        self.transaction_window = transaction_window()
+        self.transaction_window.parent_window = self
+        #
+        self.transaction_window.ui.id_line_edit.setReadOnly(True)
+        self.transaction_window.show()
+
+    def __delete_transaction(self):
+        for i in get_transactions():
+            if str(i.id) == self.ui.transactions_list.currentItem().text():
+                i.delete()
+        self.update_list()
+
+    def __open_transaction(self):
+        self.transaction_window = transaction_window()
+        self.transaction_window.parent_window = self
+        #
+        for i in get_transactions():
+            if str(i.id) == self.ui.transactions_list.currentItem().text():
+                self.transaction_window.ui.id_line_edit.setText(str(i.id))
+                self.transaction_window.ui.summ_line_edit.setText(str(i.sum))
+                for b in get_transactions_types():
+                    if b.id == i.type_id:
+                        index = self.transaction_window.ui.transaction_type_combo_box.findText(b.title)
+                        self.transaction_window.ui.transaction_type_combo_box.setCurrentIndex(index)
+                for b in get_wallets():
+                    if b.id == i.wallet_id:
+                        index = self.transaction_window.ui.wallet_combo_box.findText(b.title)
+                        self.transaction_window.ui.wallet_combo_box.setCurrentIndex(index)
+        #
+        self.transaction_window.ui.id_line_edit.setReadOnly(True)
+        self.transaction_window.show()
+
+    def update_list(self):
+        self.ui.transactions_list.clear()
+        for i in get_transactions():
+            self.ui.transactions_list.addItem(str(i.id))
+
     def __init__(self):
         super(transactions_window, self).__init__()
         self.ui = Ui_transactions_window()
         self.ui.setupUi(self)
+        self.transaction_window = None
+        #
+        self.ui.create_transaction_button.clicked.connect(self.__create_transaction)
+        self.ui.delete_transaction_button.clicked.connect(self.__delete_transaction)
+        self.ui.transactions_list.doubleClicked.connect(self.__open_transaction)
+        #
+        self.update_list()
 
 class wallets_window(QtWidgets.QMainWindow):
 
@@ -280,10 +325,34 @@ class wallet_window(QtWidgets.QMainWindow):
 
 class transaction_window(QtWidgets.QMainWindow):
 
+    def __save(self):
+        new_transaction = transaction()
+        for i in get_transactions_types():
+            if i.title == self.ui.transaction_type_combo_box.currentText():
+                new_transaction.type_id = i.id
+        for i in get_wallets():
+            if i.title == self.ui.wallet_combo_box.currentText():
+                new_transaction.wallet_id = i.id
+        new_transaction.sum = self.ui.summ_line_edit.text()
+        new_transaction.create()
+        self.parent_window.update_list()
+        self.close()
+
+    def __update_window(self):
+        for i in get_transactions_types():
+            self.ui.transaction_type_combo_box.addItem(str(i.title))
+        for i in get_wallets():
+            self.ui.wallet_combo_box.addItem(i.title)
+
     def __init__(self):
-        super(transaction, self).__init__()
+        super(transaction_window, self).__init__()
         self.ui = Ui_transaction_window()
         self.ui.setupUi(self)
+        self.parent_window = None
+        #
+        self.ui.save_button.clicked.connect(self.__save)
+        #
+        self.__update_window()
 
 class main_menu_window(QtWidgets.QMainWindow):
 
