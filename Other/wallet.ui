@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>new_wallet_window</class>
- <widget class="QMainWindow" name="new_wallet_window">
+ <class>wallet_window</class>
+ <widget class="QMainWindow" name="wallet_window">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>360</width>
-    <height>150</height>
+    <height>214</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
     <width>360</width>
-    <height>150</height>
+    <height>214</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="new_wallet_label">
+   <widget class="QLabel" name="wallet_label">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -37,7 +37,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Новый кошелёк</string>
+     <string>Кошелёк</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -47,7 +47,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>60</y>
+      <y>90</y>
       <width>101</width>
       <height>20</height>
      </rect>
@@ -67,7 +67,7 @@
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>60</y>
+      <y>90</y>
       <width>221</width>
       <height>20</height>
      </rect>
@@ -77,7 +77,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>100</y>
+      <y>160</y>
       <width>280</width>
       <height>40</height>
      </rect>
@@ -92,6 +92,69 @@
     </property>
     <property name="text">
      <string>Сохранить</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="id_line_edit">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>60</y>
+      <width>281</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="id_label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>60</y>
+      <width>31</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>ID:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="wallet_type_combo_box">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>120</y>
+      <width>271</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="wallet_type_label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>120</y>
+      <width>41</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Тип:</string>
     </property>
    </widget>
   </widget>

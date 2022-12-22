@@ -151,60 +151,182 @@ def get_transactions_types():
         transactions_types.append(current_transactions_type)
     return transactions_types
 def clear_base():
-    transactions = get_transactions()
-    for i in transactions:
+    for i in get_transactions():
         i.delete()
     #
-    transactions_types = get_transactions_types()
-    for i in transactions_types:
+    for i in get_transactions_types():
         i.delete()
     #
-    wallets = get_wallets()
-    for i in wallets:
+    for i in get_wallets():
         i.delete()
     #
-    wallets_types = get_wallets_types()
-    for i in wallets_types:
+    for i in get_wallets_types():
         i.delete()
 def setup():
     a1 = wallets_type()
     a1.title = "Cash"
     a1.create()
     #
-    a2 = wallet()
-    a2.title = "My wallet"
-    a2.type_id = a1.id
+    a2 = transactions_type()
+    a2.title = "income"
     a2.create()
     #
     a3 = transactions_type()
-    a3.title = "income"
+    a3.title = "expense"
     a3.create()
-    #
-    a4 = transactions_type()
-    a4.title = "expense"
-    a4.create()
     #
 # --Common functions
 
 # ++Interface
-class main_menu(QtWidgets.QMainWindow):
+class transactions_window(QtWidgets.QMainWindow):
 
     def __init__(self):
-        super(main_menu, self).__init__()
-        self.ui = Ui_main_menu_window()
+        super(transactions_window, self).__init__()
+        self.ui = Ui_transactions_window()
         self.ui.setupUi(self)
 
+class wallets_window(QtWidgets.QMainWindow):
 
+    def update_list(self):
+        self.ui.wallets_list.clear()
+        for i in get_wallets():
+            self.ui.wallets_list.addItem(i.title)
+
+    def __create_wallet(self):
+        self.wallet_window = wallet_window()
+        self.wallet_window.parent_window = self
+        #
+        self.wallet_window.ui.id_line_edit.setReadOnly(True)
+        self.wallet_window.show()
+
+    def __delete_wallet(self):
+        for i in get_wallets():
+            if i.title == self.ui.wallets_list.currentItem().text():
+                i.delete()
+        self.update_list()
+
+    def __open_wallet(self):
+        current_wallet = None
+        for i in get_wallets():
+            if i.title == self.ui.wallets_list.currentItem().text():
+                current_wallet = i
+        if current_wallet != None:
+            self.wallet_window = wallet_window()
+            self.wallet_window.parent_window = self
+            self.wallet_window.ui.id_line_edit.setText(str(current_wallet.id))
+            self.wallet_window.ui.title_line_edit.setText(str(current_wallet.title))
+            for i in get_wallets_types():
+                if i.id == current_wallet.type_id:
+                    index = self.wallet_window.ui.wallet_type_combo_box.findText(str(i.title))
+                    self.wallet_window.ui.wallet_type_combo_box.setCurrentIndex(index)
+            #
+            self.wallet_window.ui.id_line_edit.setReadOnly(True)
+            self.wallet_window.show()
+
+    def __init__(self):
+        super(wallets_window, self).__init__()
+        self.ui = Ui_wallets_window()
+        self.ui.setupUi(self)
+        self.ui.create_wallet_button.clicked.connect(self.__create_wallet)
+        self.ui.delete_wallet_button.clicked.connect(self.__delete_wallet)
+        self.ui.wallets_list.doubleClicked.connect(self.__open_wallet)
+        #
+        self.wallet_window = None
+        #
+        self.update_list()
+
+class settings_window(QtWidgets.QMainWindow):
+
+    def __clear_base(self):
+        clear_base()
+        setup()
+
+    def __init__(self):
+        super(settings_window, self).__init__()
+        self.ui = Ui_settings_window()
+        self.ui.setupUi(self)
+        self.ui.clear_base_button.clicked.connect(self.__clear_base)
+
+class wallet_window(QtWidgets.QMainWindow):
+
+    def __save(self):
+        # if self.ui.id_line_edit.text().count() == 0:
+        #     if self.ui.title_line_edit.text().count() != 0:
+                new_wallet = wallet()
+                new_wallet.title = self.ui.title_line_edit.text()
+                for i in get_wallets_types():
+                    if i.title == self.ui.wallet_type_combo_box.currentText():
+                        new_wallet.type_id = i.id
+                new_wallet.create()
+                self.parent_window.update_list()
+                self.close()
+        # else:
+        #     pass
+
+    def __update_window(self):
+        # if self.ui.id_line_edit.text().count() == 0:
+            for i in get_wallets_types():
+                self.ui.wallet_type_combo_box.addItem(i.title)
+        # else:
+        #     pass
+
+    def __init__(self):
+        super(wallet_window, self).__init__()
+        self.ui = Ui_wallet_window()
+        self.ui.setupUi(self)
+        self.parent_window = None
+        self.ui.save_button.clicked.connect(self.__save)
+        self.__update_window()
+
+class transaction_window(QtWidgets.QMainWindow):
+
+    def __init__(self):
+        super(transaction, self).__init__()
+        self.ui = Ui_transaction_window()
+        self.ui.setupUi(self)
+
+class main_menu_window(QtWidgets.QMainWindow):
+
+    def __settings_window(self):
+        if self.settings_window == None:
+            self.settings_window = settings_window()
+            self.settings_window.show()
+        else:
+            self.settings_window.show()
+
+    def __wallets_window(self):
+        if self.wallets_window == None:
+            self.wallets_window = wallets_window()
+            self.wallets_window.show()
+        else:
+            self.wallets_window.show()
+
+    def __transactions_window(self):
+        if self.transactions_window == None:
+            self.transactions_window = transactions_window()
+            self.transactions_window.show()
+        else:
+            self.transactions_window.show()
+
+    def __init__(self):
+        super(main_menu_window, self).__init__()
+        self.ui = Ui_main_menu_window()
+        self.ui.setupUi(self)
+        self.ui.settings_button.clicked.connect(self.__settings_window)
+        self.ui.wallets_button.clicked.connect(self.__wallets_window)
+        self.ui.transactions_button.clicked.connect(self.__transactions_window)
+        #
+        self.settings_window = None
+        self.transactions_window = None
+        self.wallets_window = None
 
 # --Interface
 
 # ++Main loop
 
-# clear_base()
-# setup()
-
 app = QtWidgets.QApplication([])
-MW = main_menu()
+MW = main_menu_window()
 MW.show()
 sys.exit(app.exec())
+
 # --Main loop
