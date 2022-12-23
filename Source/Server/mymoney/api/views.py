@@ -111,3 +111,51 @@ def get_transactions(request):
     return Response(serializer.data)
 
 ##--transactions
+
+##++revenue items
+
+@api_view(['GET'])
+def get_revenue_items(request):
+    revenue_items_list = revenue_items.objects.all()
+    serializer = revenue_items_serializer(revenue_items_list,many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def create_revenue_item(request):
+    serializer = revenue_items_serializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def delete_revenue_item(request):
+    revenue_item = revenue_items.objects.get(pk=request.data['id'])
+    revenue_item.delete()
+    response = {"result":True}
+    return Response(response)
+
+##--revenue items
+
+##++cost items
+
+@api_view(['GET'])
+def get_cost_items(request):
+    cost_items_list = cost_items.objects.all()
+    serializer = cost_items_serializer(cost_items_list,many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def create_cost_item(request):
+    serializer = cost_items_serializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def delete_cost_item(request):
+    revenue_item = cost_items.objects.get(pk=request.data['id'])
+    revenue_item.delete()
+    response = {"result":True}
+    return Response(response)
+
+##--cost items

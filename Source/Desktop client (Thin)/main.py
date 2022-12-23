@@ -71,7 +71,9 @@ class transaction:
         data = {
             "type_id":self.type_id,
             "wallet_id":self.wallet_id,
-            "sum":self.sum
+            "sum":self.sum,
+            "revenue_item_id":self.revenue_item_id,
+            "cost_item_id":self.cost_item_id
         }
         response = requests.post(settings_data.server+"/api/create_transaction/",data=data)
         json_data = response.json()
@@ -83,6 +85,8 @@ class transaction:
         self.wallet_id = None
         self.sum = None
         self.created_time = None
+        self.revenue_item_id = None
+        self.cost_item_id = None
 class transactions_type:
 
     def create(self):
@@ -99,6 +103,44 @@ class transactions_type:
         }
         response = requests.post(settings_data.server + "/api/delete_transactions_type/", data=data)
         json_data = response.json()
+
+    def __init__(self):
+        self.id = None
+        self.title = None
+class revenue_item:
+
+    def delete(self):
+        data = {
+            "id": self.id
+        }
+        response = requests.post(settings_data.server + "/api/delete_revenue_item/", data=data)
+
+    def create(self):
+        data = {
+            "title":self.title
+        }
+        response = requests.post(settings_data.server+"/api/create_revenue_item/",data=data)
+        json_data = response.json()
+        self.id = json_data["id"]
+
+    def __init__(self):
+        self.id = None
+        self.title = None
+class cost_item:
+
+    def delete(self):
+        data = {
+            "id": self.id
+        }
+        response = requests.post(settings_data.server + "/api/delete_cost_item/", data=data)
+
+    def create(self):
+        data = {
+            "title":self.title
+        }
+        response = requests.post(settings_data.server+"/api/create_cost_item/",data=data)
+        json_data = response.json()
+        self.id = json_data["id"]
 
     def __init__(self):
         self.id = None
@@ -167,6 +209,24 @@ def get_transactions_types():
         current_transactions_type.title = i["title"]
         transactions_types.append(current_transactions_type)
     return transactions_types
+def get_revenue_items():
+    response = requests.get(settings_data.server + "/api/get_revenue_items/")
+    json_data = response.json()
+    revenue_items = []
+    for i in json_data:
+        revenue_item = revenue_item()
+        revenue_item.id = i["id"]
+        revenue_items.append(revenue_item)
+    return revenue_items
+def get_cost_items():
+    response = requests.get(settings_data.server + "/api/get_cost_items/")
+    json_data = response.json()
+    cost_items = []
+    for i in json_data:
+        cost_item_item = cost_item()
+        cost_item_item.id = i["id"]
+        cost_items.append(cost_item_item)
+    return cost_items
 def clear_base():
     for i in get_transactions():
         i.delete()
@@ -196,10 +256,33 @@ def setup():
 
 # ++Interface
 class items_window(QtWidgets.QMainWindow):
+
+    def showEvent(self, event):
+        self.update_list()
+        event.accept()
+
+    def update_list(self):
+        self.ui.revenue_items_table_widget.setRowCount(0)
+        self.ui.revenue_items_table_widget.setRowCount(len(get_revenue_items()))
+        row_index = 0
+        for i in get_revenue_items():
+            self.ui.revenue_items_table_widget.setItem(row_index, 0, QtWidgets.QTableWidgetItem(str(i.id)))
+            self.ui.revenue_items_table_widget.setItem(row_index, 1, QtWidgets.QTableWidgetItem(str(i.title)))
+            row_index += 1
+        #
+        self.ui.cost_items_table_widget.setRowCount(0)
+        self.ui.cost_items_table_widget.setRowCount(len(get_cost_items()))
+        row_index = 0
+        for i in get_cost_items():
+            self.ui.cost_items_table_widget.setItem(row_index, 0, QtWidgets.QTableWidgetItem(str(i.id)))
+            self.ui.cost_items_table_widget.setItem(row_index, 1, QtWidgets.QTableWidgetItem(str(i.title)))
+            row_index += 1
+
     def __init__(self):
         super(items_window, self).__init__()
         self.ui = Ui_items_window()
         self.ui.setupUi(self)
+        self.ui.parent_window = None
 
 class item_window(QtWidgets.QMainWindow):
     def __init__(self):
@@ -270,15 +353,25 @@ class transactions_window(QtWidgets.QMainWindow):
             #
             row_index += 1
 
+    def __open_items_window(self):
+        if self.items_window == None:
+            self.items_window = items_window()
+            self.items_window.parent_window = self
+            self.items_window.show()
+        else:
+            self.items_window.show()
+
     def __init__(self):
         super(transactions_window, self).__init__()
         self.ui = Ui_transactions_window()
         self.ui.setupUi(self)
         self.transaction_window = None
         self.parent_window = None
+        self.items_window = None
         #
         self.ui.create_transaction_button.clicked.connect(self.__create_transaction)
         self.ui.delete_transaction_button.clicked.connect(self.__delete_transaction)
+        self.ui.items_button.clicked.connect(self.__open_items_window)
         self.ui.transactions_list_table_widget.doubleClicked.connect(self.__open_transaction)
         #
 

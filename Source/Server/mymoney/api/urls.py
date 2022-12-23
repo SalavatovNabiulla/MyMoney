@@ -15,4 +15,10 @@ urlpatterns = [
     path("get_transactions/", views.get_transactions),
     path("create_transaction/", views.create_transaction),
     path("delete_transaction/", views.delete_transaction),
+    path("get_revenue_items/",views.get_revenue_items),
+    path("create_revenue_item/",views.create_revenue_item),
+    path("delete_revenue_item/",views.delete_revenue_item),
+    path("get_cost_items/", views.get_cost_items),
+    path("create_cost_item/", views.create_cost_item),
+    path("delete_cost_item/", views.delete_cost_item)
 ]
