@@ -198,6 +198,11 @@ def get_transactions():
         current_transaction.wallet_id = i["wallet_id"]
         current_transaction.sum = i["sum"]
         current_transaction.created_time = i["created_time"]
+        try:
+            current_transaction.revenue_item_id = i["revenue_item_id"]
+        except:
+            current_transaction.revenue_item_id = i["cost_item_id"]
+
         transactions.append(current_transaction)
     return transactions
 def get_transactions_types():
@@ -214,9 +219,10 @@ def get_revenue_items():
     json_data = response.json()
     revenue_items = []
     for i in json_data:
-        revenue_item = revenue_item()
-        revenue_item.id = i["id"]
-        revenue_items.append(revenue_item)
+        revenue_item_item = revenue_item()
+        revenue_item_item.id = i["id"]
+        revenue_item_item.title = i["title"]
+        revenue_items.append(revenue_item_item)
     return revenue_items
 def get_cost_items():
     response = requests.get(settings_data.server + "/api/get_cost_items/")
@@ -225,6 +231,7 @@ def get_cost_items():
     for i in json_data:
         cost_item_item = cost_item()
         cost_item_item.id = i["id"]
+        cost_item_item.title = i["title"]
         cost_items.append(cost_item_item)
     return cost_items
 def clear_base():
@@ -278,24 +285,74 @@ class items_window(QtWidgets.QMainWindow):
             self.ui.cost_items_table_widget.setItem(row_index, 1, QtWidgets.QTableWidgetItem(str(i.title)))
             row_index += 1
 
+    def __create_item(self,revenue = False):
+        self.item_window = item_window()
+        self.item_window.revenue = revenue
+        self.item_window.parent_window = self
+        #
+        self.item_window.ui.id_line_edit.setReadOnly(True)
+        self.item_window.show()
+
+    def __create_revenue_item(self):
+        self.__create_item(revenue=True)
+
+    def __delete_item(self,revenue = False):
+        if revenue:
+            for i in self.ui.revenue_items_table_widget.selectedItems():
+                current_id = self.ui.revenue_items_table_widget.item(i.row(),0).text()
+                revenue = revenue_item()
+                revenue.id = current_id
+                revenue.delete()
+        else:
+            for i in self.ui.cost_items_table_widget.selectedItems():
+                current_id = self.ui.cost_items_table_widget.item(i.row(), 0).text()
+                cost = cost_item()
+                cost.id = current_id
+                cost.delete()
+
+        self.update_list()
+
+    def __delete_revenue_item(self):
+        self.__delete_item(revenue=True)
+
     def __init__(self):
         super(items_window, self).__init__()
         self.ui = Ui_items_window()
         self.ui.setupUi(self)
         self.ui.parent_window = None
+        self.item_window = None
+        self.ui.create_revenue_item_button.clicked.connect(self.__create_revenue_item)
+        self.ui.create_cost_item_button.clicked.connect(self.__create_item)
+        self.ui.delete_revenue_item_button.clicked.connect(self.__delete_revenue_item)
+        self.ui.delete_cost_item_button.clicked.connect(self.__delete_item)
 
 class item_window(QtWidgets.QMainWindow):
+
+    def __save(self):
+        if self.revenue:
+            item = revenue_item()
+            item.title = self.ui.title_line_edit.text()
+            item.create()
+        else:
+            item = cost_item()
+            item.title = self.ui.title_line_edit.text()
+            item.create()
+        self.parent_window.update_list()
+        self.close()
+
     def __init__(self):
         super(item_window, self).__init__()
-        self.ui = Ui_items_window()
+        self.ui = Ui_item_window()
         self.ui.setupUi(self)
+        self.parent_window = None
+        self.revenue = False
+        self.ui.save_button.clicked.connect(self.__save)
 
 class transactions_window(QtWidgets.QMainWindow):
 
     def showEvent(self, event):
         self.update_list()
         event.accept()
-
 
     def __create_transaction(self):
         self.transaction_window = transaction_window()
@@ -345,6 +402,15 @@ class transactions_window(QtWidgets.QMainWindow):
             for tt in get_transactions_types():
                 if str(tt.id) == str(i.type_id):
                     self.ui.transactions_list_table_widget.setItem(row_index, 1, QtWidgets.QTableWidgetItem(str(tt.title)))
+                    if tt.title == "income":
+                        for ri in get_revenue_items():
+                            if str(ri.id) == i.revenue_item_id:
+                                self.ui.transactions_list_table_widget.setItem(row_index, 5,QtWidgets.QTableWidgetItem(str(ri.title)))
+                    else:
+                        for ci in get_cost_items():
+                            if str(ci.id) == i.cost_item_id:
+                                self.ui.transactions_list_table_widget.setItem(row_index, 5, QtWidgets.QTableWidgetItem(str(ci.title)))
+
             self.ui.transactions_list_table_widget.setItem(row_index, 2, QtWidgets.QTableWidgetItem(str(i.created_time)))
             for w in get_wallets():
                 if str(w.id) == str(i.wallet_id):
@@ -508,6 +574,21 @@ class transaction_window(QtWidgets.QMainWindow):
             self.ui.transaction_type_combo_box.addItem(str(i.title))
         for i in get_wallets():
             self.ui.wallet_combo_box.addItem(i.title)
+        if self.ui.transaction_type_combo_box.currentText() == "income":
+            for i in get_revenue_items():
+                self.ui.item_combo_box.addItem(str(i.title))
+        else:
+            for i in get_cost_items():
+                self.ui.item_combo_box.addItem(str(i.title))
+
+    def __transaction_type_changed(self):
+        self.ui.item_combo_box.clear()
+        if self.ui.transaction_type_combo_box.currentText() == "income":
+            for i in get_revenue_items():
+                self.ui.item_combo_box.addItem(str(i.title))
+        else:
+            for i in get_cost_items():
+                self.ui.item_combo_box.addItem(str(i.title))
 
     def __init__(self):
         super(transaction_window, self).__init__()
@@ -516,6 +597,7 @@ class transaction_window(QtWidgets.QMainWindow):
         self.parent_window = None
         #
         self.ui.save_button.clicked.connect(self.__save)
+        self.ui.transaction_type_combo_box.currentIndexChanged.connect(self.__transaction_type_changed)
         #
         self.__update_window()
 
