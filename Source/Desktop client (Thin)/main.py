@@ -2,10 +2,10 @@ from PyQt5 import QtWidgets
 from forms import *
 import requests
 import sys
-
+import json
 
 # ++Common data
-server = "http://127.0.0.1:8000"
+settings_data = None
 # --Common data
 
 # ++Models
@@ -15,20 +15,20 @@ class wallet:
         data = {
             "id":self.id
         }
-        response = requests.post(server+"/api/delete_wallet/",data=data)
+        response = requests.post(settings_data.server+"/api/delete_wallet/",data=data)
 
     def create(self):
         data = {
             "title": self.title,
             "type_id": self.type_id
         }
-        response = requests.post(server + "/api/create_wallet/", data=data)
+        response = requests.post(settings_data.server + "/api/create_wallet/", data=data)
         json_data = response.json()
         self.id = json_data["id"]
-        self.__update_balance()
+        self.update_balance()
 
-    def __update_balance(self):
-        response = requests.get(server+"/api/get_wallets_balances/")
+    def update_balance(self):
+        response = requests.get(settings_data.server+"/api/get_wallets_balances/")
         json_data = response.json()
         for i in json_data:
             if i["wallet_id"] == self.id:
@@ -39,15 +39,13 @@ class wallet:
         self.title = None
         self.type_id = None
         self.balance = None
-        #
-        self.__update_balance()
 class wallets_type:
 
     def create(self):
         data = {
             "title":self.title
         }
-        response = requests.post(server+"/api/create_wallets_type/",data=data)
+        response = requests.post(settings_data.server+"/api/create_wallets_type/",data=data)
         json_data = response.json()
         self.id = json_data["id"]
 
@@ -55,7 +53,7 @@ class wallets_type:
         data = {
             "id":self.id
         }
-        response = requests.post(server+"/api/delete_wallets_type/",data=data)
+        response = requests.post(settings_data.server+"/api/delete_wallets_type/",data=data)
         json_data = response.json()
 
     def __init__(self):
@@ -67,7 +65,7 @@ class transaction:
         data = {
             "id": self.id
         }
-        response = requests.post(server + "/api/delete_transaction/", data=data)
+        response = requests.post(settings_data.server + "/api/delete_transaction/", data=data)
 
     def create(self):
         data = {
@@ -75,7 +73,7 @@ class transaction:
             "wallet_id":self.wallet_id,
             "sum":self.sum
         }
-        response = requests.post(server+"/api/create_transaction/",data=data)
+        response = requests.post(settings_data.server+"/api/create_transaction/",data=data)
         json_data = response.json()
         self.id = json_data["id"]
 
@@ -91,7 +89,7 @@ class transactions_type:
         data = {
             "title":self.title
         }
-        response = requests.post(server+"/api/create_transactions_type/",data=data)
+        response = requests.post(settings_data.server+"/api/create_transactions_type/",data=data)
         json_data = response.json()
         self.id = json_data["id"]
 
@@ -99,17 +97,36 @@ class transactions_type:
         data = {
             "id": self.id
         }
-        response = requests.post(server + "/api/delete_transactions_type/", data=data)
+        response = requests.post(settings_data.server + "/api/delete_transactions_type/", data=data)
         json_data = response.json()
 
     def __init__(self):
         self.id = None
         self.title = None
+class settings:
+
+    def __read_file(self):
+        with open(self.default_path,"r") as read_file:
+            data = json.load(read_file)
+            self.server = data["server"]
+
+    def update_settings(self):
+        with open(self.default_path, "w") as write_file:
+            data = {
+                "server":self.server
+            }
+            json.dump(data,write_file)
+
+    def __init__(self):
+        self.server = None
+        self.default_path = "settings.json"
+        #
+        self.__read_file()
 # --Models
 
 # ++Common functions
 def get_wallets():
-    response = requests.get(server+"/api/get_wallets/")
+    response = requests.get(settings_data.server+"/api/get_wallets/")
     json_data = response.json()
     wallets = []
     for i in json_data:
@@ -117,11 +134,11 @@ def get_wallets():
         wallet_item.id = i["id"]
         wallet_item.title = i["title"]
         wallet_item.type_id = i["type_id"]
-
+        wallet_item.update_balance()
         wallets.append(wallet_item)
     return wallets
 def get_wallets_types():
-    response = requests.get(server+"/api/get_wallets_types/")
+    response = requests.get(settings_data.server+"/api/get_wallets_types/")
     wallets_types = []
     for i in response.json():
         current_wallets_type = wallets_type()
@@ -130,7 +147,7 @@ def get_wallets_types():
         wallets_types.append(current_wallets_type)
     return wallets_types
 def get_transactions():
-    response = requests.get(server+"/api/get_transactions/")
+    response = requests.get(settings_data.server+"/api/get_transactions/")
     transactions = []
     for i in response.json():
         current_transaction = transaction()
@@ -142,7 +159,7 @@ def get_transactions():
         transactions.append(current_transaction)
     return transactions
 def get_transactions_types():
-    response = requests.get(server+"/api/get_transactions_types/")
+    response = requests.get(settings_data.server+"/api/get_transactions_types/")
     transactions_types = []
     for i in response.json():
         current_transactions_type = transactions_type()
@@ -178,7 +195,24 @@ def setup():
 # --Common functions
 
 # ++Interface
+class items_window(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(items_window, self).__init__()
+        self.ui = Ui_items_window()
+        self.ui.setupUi(self)
+
+class item_window(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(item_window, self).__init__()
+        self.ui = Ui_items_window()
+        self.ui.setupUi(self)
+
 class transactions_window(QtWidgets.QMainWindow):
+
+    def showEvent(self, event):
+        self.update_list()
+        event.accept()
+
 
     def __create_transaction(self):
         self.transaction_window = transaction_window()
@@ -188,19 +222,24 @@ class transactions_window(QtWidgets.QMainWindow):
         self.transaction_window.show()
 
     def __delete_transaction(self):
-        for i in get_transactions():
-            if str(i.id) == self.ui.transactions_list.currentItem().text():
-                i.delete()
+        for i in self.ui.transactions_list_table_widget.selectedItems():
+            current_id = self.ui.transactions_list_table_widget.item(i.row(),0).text()
+            for b in get_transactions():
+                if str(b.id) == str(current_id):
+                    b.delete()
         self.update_list()
 
     def __open_transaction(self):
         self.transaction_window = transaction_window()
         self.transaction_window.parent_window = self
         #
+        for i in self.ui.transactions_list_table_widget.selectedItems():
+            current_id = self.ui.transactions_list_table_widget.item(i.row(),0).text()
         for i in get_transactions():
-            if str(i.id) == self.ui.transactions_list.currentItem().text():
+            if str(i.id) == str(current_id):
                 self.transaction_window.ui.id_line_edit.setText(str(i.id))
                 self.transaction_window.ui.summ_line_edit.setText(str(i.sum))
+                self.transaction_window.ui.date_line_edit.setText(str(i.created_time))
                 for b in get_transactions_types():
                     if b.id == i.type_id:
                         index = self.transaction_window.ui.transaction_type_combo_box.findText(b.title)
@@ -214,28 +253,54 @@ class transactions_window(QtWidgets.QMainWindow):
         self.transaction_window.show()
 
     def update_list(self):
-        self.ui.transactions_list.clear()
-        for i in get_transactions():
-            self.ui.transactions_list.addItem(str(i.id))
+        self.ui.transactions_list_table_widget.setRowCount(0)
+        row_index = 0
+        transactions = get_transactions()
+        self.ui.transactions_list_table_widget.setRowCount(len(transactions))
+        for i in transactions:
+            self.ui.transactions_list_table_widget.setItem(row_index,0,QtWidgets.QTableWidgetItem(str(i.id)))
+            for tt in get_transactions_types():
+                if str(tt.id) == str(i.type_id):
+                    self.ui.transactions_list_table_widget.setItem(row_index, 1, QtWidgets.QTableWidgetItem(str(tt.title)))
+            self.ui.transactions_list_table_widget.setItem(row_index, 2, QtWidgets.QTableWidgetItem(str(i.created_time)))
+            for w in get_wallets():
+                if str(w.id) == str(i.wallet_id):
+                    self.ui.transactions_list_table_widget.setItem(row_index, 3, QtWidgets.QTableWidgetItem(str(w.title)))
+            self.ui.transactions_list_table_widget.setItem(row_index, 4, QtWidgets.QTableWidgetItem(str(i.sum)))
+            #
+            row_index += 1
 
     def __init__(self):
         super(transactions_window, self).__init__()
         self.ui = Ui_transactions_window()
         self.ui.setupUi(self)
         self.transaction_window = None
+        self.parent_window = None
         #
         self.ui.create_transaction_button.clicked.connect(self.__create_transaction)
         self.ui.delete_transaction_button.clicked.connect(self.__delete_transaction)
-        self.ui.transactions_list.doubleClicked.connect(self.__open_transaction)
+        self.ui.transactions_list_table_widget.doubleClicked.connect(self.__open_transaction)
         #
-        self.update_list()
 
 class wallets_window(QtWidgets.QMainWindow):
 
+    def showEvent(self, event):
+        self.update_list()
+        event.accept()
+
     def update_list(self):
-        self.ui.wallets_list.clear()
+        self.ui.wallets_list_table_widget.setRowCount(0)
+        self.ui.wallets_list_table_widget.setRowCount(len(get_wallets()))
+        row_index = 0
         for i in get_wallets():
-            self.ui.wallets_list.addItem(i.title)
+            self.ui.wallets_list_table_widget.setItem(row_index,0,QtWidgets.QTableWidgetItem(str(i.id)))
+            self.ui.wallets_list_table_widget.setItem(row_index,1,QtWidgets.QTableWidgetItem(str(i.title)))
+            for wt in get_wallets_types():
+                if str(wt.id) == str(i.type_id):
+                    self.ui.wallets_list_table_widget.setItem(row_index,2,QtWidgets.QTableWidgetItem(str(wt.title)))
+            self.ui.wallets_list_table_widget.setItem(row_index,3,QtWidgets.QTableWidgetItem(str(i.balance)))
+            row_index += 1
+
 
     def __create_wallet(self):
         self.wallet_window = wallet_window()
@@ -245,25 +310,26 @@ class wallets_window(QtWidgets.QMainWindow):
         self.wallet_window.show()
 
     def __delete_wallet(self):
-        for i in get_wallets():
-            if i.title == self.ui.wallets_list.currentItem().text():
-                i.delete()
+        for i in self.ui.wallets_list_table_widget.selectedItems():
+            current_id = self.ui.wallets_list_table_widget.item(i.row(),0).text()
+            for b in get_wallets():
+                if str(b.id) == str(current_id):
+                    b.delete()
         self.update_list()
 
     def __open_wallet(self):
-        current_wallet = None
+        for i in self.ui.wallets_list_table_widget.selectedItems():
+            current_id = self.ui.wallets_list_table_widget.item(i.row(),0).text()
         for i in get_wallets():
-            if i.title == self.ui.wallets_list.currentItem().text():
-                current_wallet = i
-        if current_wallet != None:
-            self.wallet_window = wallet_window()
-            self.wallet_window.parent_window = self
-            self.wallet_window.ui.id_line_edit.setText(str(current_wallet.id))
-            self.wallet_window.ui.title_line_edit.setText(str(current_wallet.title))
-            for i in get_wallets_types():
-                if i.id == current_wallet.type_id:
-                    index = self.wallet_window.ui.wallet_type_combo_box.findText(str(i.title))
-                    self.wallet_window.ui.wallet_type_combo_box.setCurrentIndex(index)
+            if str(i.id) == str(current_id):
+                self.wallet_window = wallet_window()
+                self.wallet_window.parent_window = self
+                self.wallet_window.ui.id_line_edit.setText(str(i.id))
+                self.wallet_window.ui.title_line_edit.setText(str(i.title))
+                for wt in get_wallets_types():
+                    if wt.id == i.type_id:
+                        index = self.wallet_window.ui.wallet_type_combo_box.findText(str(wt.title))
+                        self.wallet_window.ui.wallet_type_combo_box.setCurrentIndex(index)
             #
             self.wallet_window.ui.id_line_edit.setReadOnly(True)
             self.wallet_window.show()
@@ -274,7 +340,7 @@ class wallets_window(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self.ui.create_wallet_button.clicked.connect(self.__create_wallet)
         self.ui.delete_wallet_button.clicked.connect(self.__delete_wallet)
-        self.ui.wallets_list.doubleClicked.connect(self.__open_wallet)
+        self.ui.wallets_list_table_widget.doubleClicked.connect(self.__open_wallet)
         #
         self.wallet_window = None
         #
@@ -286,11 +352,17 @@ class settings_window(QtWidgets.QMainWindow):
         clear_base()
         setup()
 
+    def __save_settings(self):
+        settings_data.server = self.ui.server_line_edit.text()
+        settings_data.update_settings()
+
     def __init__(self):
         super(settings_window, self).__init__()
         self.ui = Ui_settings_window()
         self.ui.setupUi(self)
         self.ui.clear_base_button.clicked.connect(self.__clear_base)
+        self.ui.save_button.clicked.connect(self.__save_settings)
+        self.ui.server_line_edit.setText(settings_data.server)
 
 class wallet_window(QtWidgets.QMainWindow):
 
@@ -373,6 +445,7 @@ class main_menu_window(QtWidgets.QMainWindow):
     def __transactions_window(self):
         if self.transactions_window == None:
             self.transactions_window = transactions_window()
+            self.transactions_window.parent_window = self
             self.transactions_window.show()
         else:
             self.transactions_window.show()
@@ -393,6 +466,7 @@ class main_menu_window(QtWidgets.QMainWindow):
 
 # ++Main loop
 
+settings_data = settings()
 app = QtWidgets.QApplication([])
 MW = main_menu_window()
 MW.show()

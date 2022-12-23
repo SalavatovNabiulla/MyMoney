@@ -6,13 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>360</width>
+    <width>800</width>
     <height>530</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>530</height>
+   </size>
+  </property>
   <property name="maximumSize">
    <size>
-    <width>360</width>
+    <width>800</width>
     <height>530</height>
    </size>
   </property>
@@ -25,7 +31,7 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>360</width>
+      <width>801</width>
       <height>40</height>
      </rect>
     </property>
@@ -47,14 +53,14 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>50</y>
-      <width>280</width>
+      <y>480</y>
+      <width>220</width>
       <height>40</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>8</pointsize>
       <weight>75</weight>
       <bold>true</bold>
       <kerning>true</kerning>
@@ -64,28 +70,18 @@
      <string>Создать кошелёк</string>
     </property>
    </widget>
-   <widget class="QListWidget" name="wallets_list">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>100</y>
-      <width>280</width>
-      <height>360</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="delete_wallet_button">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>470</y>
-      <width>280</width>
+      <x>290</x>
+      <y>480</y>
+      <width>220</width>
       <height>40</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>12</pointsize>
+      <pointsize>8</pointsize>
       <weight>75</weight>
       <bold>true</bold>
       <kerning>true</kerning>
@@ -93,6 +89,57 @@
     </property>
     <property name="text">
      <string>Удалить кошелёк</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="wallets_list_table_widget">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>50</y>
+      <width>721</width>
+      <height>401</height>
+     </rect>
+    </property>
+    <column>
+     <property name="text">
+      <string>ID</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Наименование</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Тип</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Баланс</string>
+     </property>
+    </column>
+   </widget>
+   <widget class="QPushButton" name="wallets_types_button">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>480</y>
+      <width>220</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+      <kerning>true</kerning>
+     </font>
+    </property>
+    <property name="text">
+     <string>Типы кошельков</string>
     </property>
    </widget>
   </widget>
