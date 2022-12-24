@@ -198,10 +198,8 @@ def get_transactions():
         current_transaction.wallet_id = i["wallet_id"]
         current_transaction.sum = i["sum"]
         current_transaction.created_time = i["created_time"]
-        try:
-            current_transaction.revenue_item_id = i["revenue_item_id"]
-        except:
-            current_transaction.revenue_item_id = i["cost_item_id"]
+        current_transaction.revenue_item_id = i["revenue_item_id"]
+        current_transaction.cost_item_id = i["cost_item_id"]
 
         transactions.append(current_transaction)
     return transactions
@@ -404,11 +402,11 @@ class transactions_window(QtWidgets.QMainWindow):
                     self.ui.transactions_list_table_widget.setItem(row_index, 1, QtWidgets.QTableWidgetItem(str(tt.title)))
                     if tt.title == "income":
                         for ri in get_revenue_items():
-                            if str(ri.id) == i.revenue_item_id:
+                            if str(ri.id) == str(i.revenue_item_id):
                                 self.ui.transactions_list_table_widget.setItem(row_index, 5,QtWidgets.QTableWidgetItem(str(ri.title)))
                     else:
                         for ci in get_cost_items():
-                            if str(ci.id) == i.cost_item_id:
+                            if str(ci.id) == str(i.cost_item_id):
                                 self.ui.transactions_list_table_widget.setItem(row_index, 5, QtWidgets.QTableWidgetItem(str(ci.title)))
 
             self.ui.transactions_list_table_widget.setItem(row_index, 2, QtWidgets.QTableWidgetItem(str(i.created_time)))
@@ -564,12 +562,24 @@ class transaction_window(QtWidgets.QMainWindow):
         for i in get_wallets():
             if i.title == self.ui.wallet_combo_box.currentText():
                 new_transaction.wallet_id = i.id
+        if self.ui.transaction_type_combo_box.currentText() == "income":
+            for i in get_revenue_items():
+                if i.title == self.ui.item_combo_box.currentText():
+                    new_transaction.revenue_item_id = i.id
+        else:
+            for i in get_cost_items():
+                if i.title == self.ui.item_combo_box.currentText():
+                    new_transaction.cost_item_id = i.id
         new_transaction.sum = self.ui.summ_line_edit.text()
         new_transaction.create()
         self.parent_window.update_list()
         self.close()
 
     def __update_window(self):
+        self.ui.transaction_type_combo_box.clear()
+        self.ui.item_combo_box.clear()
+        self.ui.wallet_combo_box.clear()
+        #
         for i in get_transactions_types():
             self.ui.transaction_type_combo_box.addItem(str(i.title))
         for i in get_wallets():
@@ -580,6 +590,7 @@ class transaction_window(QtWidgets.QMainWindow):
         else:
             for i in get_cost_items():
                 self.ui.item_combo_box.addItem(str(i.title))
+        self.__transaction_type_changed()
 
     def __transaction_type_changed(self):
         self.ui.item_combo_box.clear()
