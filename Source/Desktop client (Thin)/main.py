@@ -313,12 +313,17 @@ def setup():
 # ++Interface
 class wallets_type_window(QtWidgets.QMainWindow):
 
+    def closeEvent(self, event):
+        self.parent_window.update_list()
+        event.accept()
+
     def __save(self):
         new_wallets_type = wallets_type()
         new_wallets_type.title = self.ui.title_line_edit.text()
         if len(self.ui.id_line_edit.text()) == 0:
             new_wallets_type.create()
         else:
+            new_wallets_type.id = self.ui.id_line_edit.text()
             new_wallets_type.update()
         self.parent_window.update_list()
         self.close()
@@ -334,6 +339,10 @@ class wallets_type_window(QtWidgets.QMainWindow):
         self.ui.save_button.clicked.connect(self.__save)
 
 class wallets_types_window(QtWidgets.QMainWindow):
+
+    def closeEvent(self, event):
+        self.parent_window.update_list()
+        event.accept()
 
     def __create_wallets_type(self):
         self.wallets_type_window = wallets_type_window()
@@ -380,6 +389,7 @@ class wallets_types_window(QtWidgets.QMainWindow):
         self.ui = Ui_wallets_types_window()
         self.ui.setupUi(self)
         #
+        self.parent_window = None
         self.wallets_type_window = None
         #
         self.ui.wallets_types_list_table_widget.doubleClicked.connect(self.__open_wallets_type)
@@ -608,6 +618,7 @@ class wallets_window(QtWidgets.QMainWindow):
 
     def __open_wallets_types(self):
         self.wallets_types_window = wallets_types_window()
+        self.wallets_types_window.parent_window = self
         self.wallets_types_window.show()
 
     def showEvent(self, event):
