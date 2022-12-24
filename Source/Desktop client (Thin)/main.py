@@ -83,6 +83,7 @@ class transaction:
                 else:
                     self.revenue_item_id = None
         data = {
+            "id":self.id,
             "type_id":self.type_id,
             "wallet_id":self.wallet_id,
             "sum":self.sum,
@@ -141,6 +142,7 @@ class revenue_item:
 
     def update(self):
         data = {
+            "id":self.id,
             "title":self.title
         }
         response = requests.post(settings_data.server+"/api/update_revenue_item/",data=data)
@@ -166,6 +168,7 @@ class cost_item:
 
     def update(self):
         data = {
+            "id": self.id,
             "title":self.title
         }
         response = requests.post(settings_data.server+"/api/update_cost_item/",data=data)
@@ -487,6 +490,7 @@ class item_window(QtWidgets.QMainWindow):
             if len(self.ui.id_line_edit.text()) == 0:
                 item.create()
             else:
+                item.id = self.ui.id_line_edit.text()
                 item.update()
         else:
             item = cost_item()
@@ -494,6 +498,7 @@ class item_window(QtWidgets.QMainWindow):
             if len(self.ui.id_line_edit.text()) == 0:
                 item.create()
             else:
+                item.id = self.ui.id_line_edit.text()
                 item.update()
         self.parent_window.update_list()
         self.close()
@@ -698,6 +703,7 @@ class wallet_window(QtWidgets.QMainWindow):
         if len(self.ui.id_line_edit.text()) == 0:
             new_wallet.create()
         else:
+            new_wallet.id = self.ui.id_line_edit.text()
             new_wallet.update()
         self.parent_window.update_list()
         self.close()
@@ -739,6 +745,7 @@ class transaction_window(QtWidgets.QMainWindow):
         if len(self.ui.id_line_edit.text()) == 0:
             new_transaction.create()
         else:
+            new_transaction.id = self.ui.id_line_edit.text()
             new_transaction.update()
         self.parent_window.update_list()
         self.close()

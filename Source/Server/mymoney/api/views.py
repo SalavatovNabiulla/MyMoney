@@ -7,7 +7,11 @@ from .serializers import *
 
 @api_view(['POST'])
 def update_wallets_type(request):
-    pass
+    current_wallets_type = wallets_types.objects.get(pk=request.data['id'])
+    current_wallets_type.title = request.data['title']
+    current_wallets_type.save()
+    serializer = wallets_types_serializer(current_wallets_type)
+    return Response(serializer.data)
 
 @api_view(['POST'])
 def create_wallets_type(request):
@@ -31,7 +35,12 @@ def delete_wallets_type(request):
 
 @api_view(['POST'])
 def update_wallet(request):
-    pass
+    current_wallet = wallets.objects.get(pk=request.data['id'])
+    current_wallet.title = request.data['title']
+    current_wallet.type_id = wallets_types.objects.get(pk=request.data['type_id'])
+    current_wallet.save()
+    serializer = wallets_serializer(current_wallet)
+    return Response(serializer.data)
 
 @api_view(['POST'])
 def delete_wallet(request):
@@ -114,7 +123,43 @@ def create_transaction(request):
 
 @api_view(['POST'])
 def update_transaction(request):
-    pass
+    current_transaction = transactions.objects.get(pk=request.data['id'])
+    wallets_balance = wallets_balances.objects.get(wallet_id=current_transaction.wallet_id)
+    #
+    old_sum = current_transaction.sum
+    old_type = current_transaction.type_id
+    #
+    current_transaction.type_id = transactions_types.objects.get(pk=int(request.data['type_id']))
+    current_transaction.sum = int(request.data['sum'])
+    current_transaction.wallet_id = wallets.objects.get(pk=int(request.data['wallet_id']))
+    try:
+        current_transaction.revenue_item_id = revenue_items.objects.get(pk=int(request.data['revenue_item_id']))
+    except:
+        current_transaction.cost_item_id = cost_items.objects.get(pk=int(request.data['cost_item_id']))
+    current_transaction.save()
+    #
+    new_sum = current_transaction.sum
+    new_type = current_transaction.type_id
+    #
+    if old_type.id == new_type.id:
+        if new_type.title == "income":
+            wallets_balance.balance = wallets_balance.balance - old_sum
+            wallets_balance.balance = wallets_balance.balance + new_sum
+        else:
+            wallets_balance.balance = wallets_balance.balance + old_sum
+            wallets_balance.balance = wallets_balance.balance - new_sum
+    else:
+        if new_type.title == "income":
+            wallets_balance.balance = wallets_balance.balance + old_sum
+            wallets_balance.balance = wallets_balance.balance + new_sum
+        else:
+            wallets_balance.balance = wallets_balance.balance - old_sum
+            wallets_balance.balance = wallets_balance.balance - new_sum
+
+    wallets_balance.save(update_fields=['balance'])
+    #
+    serializer = transactions_serializer(current_transaction)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def get_transactions(request):
@@ -148,7 +193,11 @@ def delete_revenue_item(request):
 
 @api_view(['POST'])
 def update_revenue_item(request):
-    pass
+    current_revenue_item = revenue_items.objects.get(pk=request.data['id'])
+    current_revenue_item.title = request.data['title']
+    current_revenue_item.save()
+    serializer = revenue_items_serializer(current_revenue_item)
+    return Response(serializer.data)
 
 ##--revenue items
 
@@ -176,6 +225,10 @@ def delete_cost_item(request):
 
 @api_view(['POST'])
 def update_cost_item(request):
-    pass
+    current_cost_item = cost_items.objects.get(pk=request.data['id'])
+    current_cost_item.title = request.data['title']
+    current_cost_item.save()
+    serializer = cost_items_serializer(current_cost_item)
+    return Response(serializer.data)
 
 ##--cost items
