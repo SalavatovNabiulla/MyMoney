@@ -11,6 +11,14 @@ settings_data = None
 # ++Models
 class wallet:
 
+    def update(self):
+        data = {
+            "id":self.id,
+            "title":self.title,
+            "type_id":self.type_id
+        }
+        response = requests.post(settings_data.server+"/api/update_wallet/",data=data)
+
     def delete(self):
         data = {
             "id":self.id
@@ -41,6 +49,13 @@ class wallet:
         self.balance = None
 class wallets_type:
 
+    def update(self):
+        data = {
+            "id":self.id,
+            "title":self.title
+        }
+        response = requests.post(settings_data.server+"/api/update_wallets_type/",data=data)
+
     def create(self):
         data = {
             "title":self.title
@@ -60,6 +75,22 @@ class wallets_type:
         self.id = None
         self.title = None
 class transaction:
+
+    def update(self):
+        for i in get_transactions_types():
+            if str(i.id) == self.type_id:
+                if str(i.title) == "income":
+                    self.cost_item_id = None
+                else:
+                    self.revenue_item_id = None
+        data = {
+            "type_id":self.type_id,
+            "wallet_id":self.wallet_id,
+            "sum":self.sum,
+            "revenue_item_id": self.revenue_item_id,
+            "cost_item_id": self.cost_item_id
+        }
+        response = requests.post(settings_data.server + "/api/update_transaction/", data=data)
 
     def delete(self):
         data = {
@@ -109,6 +140,12 @@ class transactions_type:
         self.title = None
 class revenue_item:
 
+    def update(self):
+        data = {
+            "title":self.title
+        }
+        response = requests.post(settings_data.server+"/api/update_revenue_item/",data=data)
+
     def delete(self):
         data = {
             "id": self.id
@@ -127,6 +164,12 @@ class revenue_item:
         self.id = None
         self.title = None
 class cost_item:
+
+    def update(self):
+        data = {
+            "title":self.title
+        }
+        response = requests.post(settings_data.server+"/api/update_cost_item/",data=data)
 
     def delete(self):
         data = {
@@ -266,6 +309,18 @@ def setup():
 # --Common functions
 
 # ++Interface
+class wallets_type_window(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(wallets_type,self).__init__()
+        self.ui = Ui_wallets_type_window()
+        self.ui.setupUi(self)
+
+class wallets_types_window(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(wallets_types_window, self).__init__()
+        self.ui = Ui_wallets_types_window()
+        self.ui.setupUi(self)
+
 class items_window(QtWidgets.QMainWindow):
 
     def showEvent(self, event):
@@ -322,6 +377,7 @@ class items_window(QtWidgets.QMainWindow):
     def __open_item(self,revenue):
         self.item_window = item_window()
         self.item_window.parent_window = self
+        self.item_window.revenue = revenue
         #
         if revenue:
             for i in self.ui.revenue_items_table_widget.selectedItems():
@@ -366,11 +422,17 @@ class item_window(QtWidgets.QMainWindow):
         if self.revenue:
             item = revenue_item()
             item.title = self.ui.title_line_edit.text()
-            item.create()
+            if len(self.ui.id_line_edit.text()) == 0:
+                item.create()
+            else:
+                item.update()
         else:
             item = cost_item()
             item.title = self.ui.title_line_edit.text()
-            item.create()
+            if len(self.ui.id_line_edit.text()) == 0:
+                item.create()
+            else:
+                item.update()
         self.parent_window.update_list()
         self.close()
 
@@ -477,6 +539,10 @@ class transactions_window(QtWidgets.QMainWindow):
 
 class wallets_window(QtWidgets.QMainWindow):
 
+    def __open_wallets_types(self):
+        self.wallets_types_window = wallets_types_window()
+        self.wallets_types_window.show()
+
     def showEvent(self, event):
         self.update_list()
         event.accept()
@@ -534,8 +600,10 @@ class wallets_window(QtWidgets.QMainWindow):
         self.ui.create_wallet_button.clicked.connect(self.__create_wallet)
         self.ui.delete_wallet_button.clicked.connect(self.__delete_wallet)
         self.ui.wallets_list_table_widget.doubleClicked.connect(self.__open_wallet)
+        self.ui.wallets_types_button.clicked.connect(self.__open_wallets_types)
         #
         self.wallet_window = None
+        self.wallets_types_window = None
         #
         self.update_list()
 
@@ -560,18 +628,17 @@ class settings_window(QtWidgets.QMainWindow):
 class wallet_window(QtWidgets.QMainWindow):
 
     def __save(self):
-        # if self.ui.id_line_edit.text().count() == 0:
-        #     if self.ui.title_line_edit.text().count() != 0:
-                new_wallet = wallet()
-                new_wallet.title = self.ui.title_line_edit.text()
-                for i in get_wallets_types():
-                    if i.title == self.ui.wallet_type_combo_box.currentText():
-                        new_wallet.type_id = i.id
-                new_wallet.create()
-                self.parent_window.update_list()
-                self.close()
-        # else:
-        #     pass
+        new_wallet = wallet()
+        new_wallet.title = self.ui.title_line_edit.text()
+        for i in get_wallets_types():
+            if i.title == self.ui.wallet_type_combo_box.currentText():
+                new_wallet.type_id = i.id
+        if len(self.ui.id_line_edit.text()) == 0:
+            new_wallet.create()
+        else:
+            new_wallet.update()
+        self.parent_window.update_list()
+        self.close()
 
     def __update_window(self):
         # if self.ui.id_line_edit.text().count() == 0:
@@ -607,7 +674,10 @@ class transaction_window(QtWidgets.QMainWindow):
                 if i.title == self.ui.item_combo_box.currentText():
                     new_transaction.cost_item_id = i.id
         new_transaction.sum = self.ui.summ_line_edit.text()
-        new_transaction.create()
+        if len(self.ui.id_line_edit.text()) == 0:
+            new_transaction.create()
+        else:
+            new_transaction.update()
         self.parent_window.update_list()
         self.close()
 

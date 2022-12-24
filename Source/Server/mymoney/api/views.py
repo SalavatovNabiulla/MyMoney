@@ -6,6 +6,10 @@ from .serializers import *
 #++wallets
 
 @api_view(['POST'])
+def update_wallets_type(request):
+    pass
+
+@api_view(['POST'])
 def create_wallets_type(request):
     serializer = wallets_types_serializer(data=request.data)
     if serializer.is_valid():
@@ -24,6 +28,10 @@ def delete_wallets_type(request):
     wallets_type.delete()
     response = {"result":True}
     return Response(response)
+
+@api_view(['POST'])
+def update_wallet(request):
+    pass
 
 @api_view(['POST'])
 def delete_wallet(request):
@@ -104,6 +112,10 @@ def create_transaction(request):
         wallets_balance.save(update_fields=['balance'])
     return Response(serializer.data)
 
+@api_view(['POST'])
+def update_transaction(request):
+    pass
+
 @api_view(['GET'])
 def get_transactions(request):
     transactions_list = transactions.objects.all()
@@ -134,6 +146,10 @@ def delete_revenue_item(request):
     response = {"result":True}
     return Response(response)
 
+@api_view(['POST'])
+def update_revenue_item(request):
+    pass
+
 ##--revenue items
 
 ##++cost items
@@ -157,5 +173,9 @@ def delete_cost_item(request):
     revenue_item.delete()
     response = {"result":True}
     return Response(response)
+
+@api_view(['POST'])
+def update_cost_item(request):
+    pass
 
 ##--cost items
