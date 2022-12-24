@@ -69,7 +69,6 @@ class wallets_type:
             "id":self.id
         }
         response = requests.post(settings_data.server+"/api/delete_wallets_type/",data=data)
-        json_data = response.json()
 
     def __init__(self):
         self.id = None
@@ -310,16 +309,79 @@ def setup():
 
 # ++Interface
 class wallets_type_window(QtWidgets.QMainWindow):
+
+    def __save(self):
+        new_wallets_type = wallets_type()
+        new_wallets_type.title = self.ui.title_line_edit.text()
+        if len(self.ui.id_line_edit.text()) == 0:
+            new_wallets_type.create()
+        else:
+            new_wallets_type.update()
+        self.parent_window.update_list()
+        self.close()
+
+
     def __init__(self):
-        super(wallets_type,self).__init__()
+        super(wallets_type_window,self).__init__()
         self.ui = Ui_wallets_type_window()
         self.ui.setupUi(self)
+        #
+        self.parent_window = None
+        #
+        self.ui.save_button.clicked.connect(self.__save)
 
 class wallets_types_window(QtWidgets.QMainWindow):
+
+    def __create_wallets_type(self):
+        self.wallets_type_window = wallets_type_window()
+        self.wallets_type_window.parent_window = self
+        self.wallets_type_window.show()
+
+    def __delete_wallets_type(self):
+        for i in self.ui.wallets_types_list_table_widget.selectedItems():
+            current_id = self.ui.wallets_types_list_table_widget.item(i.row(),0).text()
+        for i in get_wallets_types():
+            if str(i.id) == str(current_id):
+                i.delete()
+        self.update_list()
+
+    def __open_wallets_type(self):
+        self.wallets_type_window = wallets_type_window()
+        self.wallets_type_window.parent_window = self
+        #
+        for i in self.ui.wallets_types_list_table_widget.selectedItems():
+            currentId = self.ui.wallets_types_list_table_widget.item(i.row(),0).text()
+        for i in get_wallets_types():
+            if str(i.id) == str(currentId):
+                self.wallets_type_window.ui.id_line_edit.setText(str(i.id))
+                self.wallets_type_window.ui.title_line_edit.setText(str(i.title))
+        #
+        self.wallets_type_window.show()
+
+    def update_list(self):
+        wallets_types_window = get_wallets_types()
+        self.ui.wallets_types_list_table_widget.setRowCount(0)
+        self.ui.wallets_types_list_table_widget.setRowCount(len(wallets_types_window))
+        row_index = 0
+        for i in wallets_types_window:
+            self.ui.wallets_types_list_table_widget.setItem(row_index,0,QtWidgets.QTableWidgetItem(str(i.id)))
+            self.ui.wallets_types_list_table_widget.setItem(row_index, 1, QtWidgets.QTableWidgetItem(str(i.title)))
+            row_index += 1
+
+    def showEvent(self, event):
+        self.update_list()
+        event.accept()
+
     def __init__(self):
         super(wallets_types_window, self).__init__()
         self.ui = Ui_wallets_types_window()
         self.ui.setupUi(self)
+        #
+        self.wallets_type_window = None
+        #
+        self.ui.wallets_types_list_table_widget.doubleClicked.connect(self.__open_wallets_type)
+        self.ui.create_wallets_types_button.clicked.connect(self.__create_wallets_type)
+        self.ui.delete_wallets_types_button.clicked.connect(self.__delete_wallets_type)
 
 class items_window(QtWidgets.QMainWindow):
 

@@ -67,7 +67,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Создать кошелёк</string>
+     <string>Создать тип кошельков</string>
     </property>
    </widget>
    <widget class="QPushButton" name="delete_wallets_types_button">
@@ -88,7 +88,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Удалить кошелёк</string>
+     <string>Удалить тип кошельков</string>
     </property>
    </widget>
    <widget class="QTableWidget" name="wallets_types_list_table_widget">

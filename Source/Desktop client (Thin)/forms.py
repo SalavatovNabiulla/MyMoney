@@ -733,8 +733,8 @@ class Ui_wallets_types_window(object):
         _translate = QtCore.QCoreApplication.translate
         wallets_types_window.setWindowTitle(_translate("wallets_types_window", "MainWindow"))
         self.wallets_types_label.setText(_translate("wallets_types_window", "Типы кошельков"))
-        self.create_wallets_types_button.setText(_translate("wallets_types_window", "Создать кошелёк"))
-        self.delete_wallets_types_button.setText(_translate("wallets_types_window", "Удалить кошелёк"))
+        self.create_wallets_types_button.setText(_translate("wallets_types_window", "Создать тип кошельков"))
+        self.delete_wallets_types_button.setText(_translate("wallets_types_window", "Удалить тип кошельков"))
         item = self.wallets_types_list_table_widget.horizontalHeaderItem(0)
         item.setText(_translate("wallets_types_window", "ID"))
         item = self.wallets_types_list_table_widget.horizontalHeaderItem(1)
