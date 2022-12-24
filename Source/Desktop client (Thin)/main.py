@@ -244,6 +244,12 @@ def clear_base():
     #
     for i in get_wallets_types():
         i.delete()
+    #
+    for i in get_cost_items():
+        i.delete()
+    #
+    for i in get_revenue_items():
+        i.delete()
 def setup():
     a1 = wallets_type()
     a1.title = "Cash"
@@ -313,6 +319,34 @@ class items_window(QtWidgets.QMainWindow):
     def __delete_revenue_item(self):
         self.__delete_item(revenue=True)
 
+    def __open_item(self,revenue):
+        self.item_window = item_window()
+        self.item_window.parent_window = self
+        #
+        if revenue:
+            for i in self.ui.revenue_items_table_widget.selectedItems():
+                current_id = self.ui.revenue_items_table_widget.item(i.row(), 0).text()
+            for i in get_revenue_items():
+                if str(i.id) == str(current_id):
+                    self.item_window.ui.id_line_edit.setText(str(i.id))
+                    self.item_window.ui.title_line_edit.setText(str(i.title))
+        else:
+            for i in self.ui.cost_items_table_widget.selectedItems():
+                current_id = self.ui.cost_items_table_widget.item(i.row(), 0).text()
+            for i in get_cost_items():
+                if str(i.id) == str(current_id):
+                    self.item_window.ui.id_line_edit.setText(str(i.id))
+                    self.item_window.ui.title_line_edit.setText(str(i.title))
+        #
+        self.item_window.ui.id_line_edit.setReadOnly(True)
+        self.item_window.show()
+
+    def __open_revenue_item(self):
+        self.__open_item(revenue=True)
+
+    def __open_cost_item(self):
+        self.__open_item(revenue=False)
+
     def __init__(self):
         super(items_window, self).__init__()
         self.ui = Ui_items_window()
@@ -323,6 +357,8 @@ class items_window(QtWidgets.QMainWindow):
         self.ui.create_cost_item_button.clicked.connect(self.__create_item)
         self.ui.delete_revenue_item_button.clicked.connect(self.__delete_revenue_item)
         self.ui.delete_cost_item_button.clicked.connect(self.__delete_item)
+        self.ui.cost_items_table_widget.doubleClicked.connect(self.__open_cost_item)
+        self.ui.revenue_items_table_widget.doubleClicked.connect(self.__open_revenue_item)
 
 class item_window(QtWidgets.QMainWindow):
 
