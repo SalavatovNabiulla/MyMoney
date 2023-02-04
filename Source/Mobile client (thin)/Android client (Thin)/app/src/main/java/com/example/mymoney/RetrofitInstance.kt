@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object RetrofitInstance {
     val api: TransactionsApi by lazy {
         Retrofit.Builder()
-            .baseUrl("http://192.168.1.187")
+            .baseUrl("http://nabiulla.pythonanywhere.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(TransactionsApi::class.java)
