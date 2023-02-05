@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/transactions_button"
+        android:layout_width="220dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="172dp"
+        android:text="Транзакции"
+        app:layout_constraintBottom_toTopOf="@+id/wallets_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/revenue_items_button"
+        android:layout_width="220dp"
+        android:layout_height="50dp"
+        android:text="Статьи расходов"
+        app:layout_constraintBottom_toTopOf="@+id/settings_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/income_items_button" />
+
+    <Button
+        android:id="@+id/income_items_button"
+        android:layout_width="220dp"
+        android:layout_height="50dp"
+        android:text="Статьи доходов"
+        app:layout_constraintBottom_toTopOf="@+id/revenue_items_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wallets_types_button" />
+
+    <Button
+        android:id="@+id/wallets_types_button"
+        android:layout_width="220dp"
+        android:layout_height="50dp"
+        android:text="Типы кошельков"
+        app:layout_constraintBottom_toTopOf="@+id/income_items_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wallets_button" />
+
+    <Button
+        android:id="@+id/wallets_button"
+        android:layout_width="220dp"
+        android:layout_height="50dp"
+        android:text="Кошельки"
+        app:layout_constraintBottom_toTopOf="@+id/wallets_types_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/transactions_button" />
+
+    <Button
+        android:id="@+id/settings_button"
+        android:layout_width="220dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="88dp"
+        android:text="Настройки"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/revenue_items_button" />
+</androidx.constraintlayout.widget.ConstraintLayout>

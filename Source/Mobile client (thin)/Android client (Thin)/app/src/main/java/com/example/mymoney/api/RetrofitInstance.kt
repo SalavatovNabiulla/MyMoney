@@ -1,14 +1,16 @@
-package com.example.mymoney
+package com.example.mymoney.api
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
-    val api: TransactionsApi by lazy {
+    public var server_api = "0.0.0.0"
+    val api: MyMoneyApi by lazy {
         Retrofit.Builder()
-            .baseUrl("http://nabiulla.pythonanywhere.com/")
+            .baseUrl(server_api.toString())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(TransactionsApi::class.java)
+            .create(MyMoneyApi::class.java)
     }
+
 }
