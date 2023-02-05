@@ -1,4 +1,4 @@
-package com.example.mymoney.api.models
+package com.example.mymoney.models
 
 data class Transaction(
     val cost_item_id: Int,

@@ -4,13 +4,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
-    public var server_api = "0.0.0.0"
-    val api: MyMoneyApi by lazy {
+    public var server_ip = "0.0.0.0"
+    val api : MyMoneyApi by lazy {
         Retrofit.Builder()
-            .baseUrl(server_api.toString())
+            .baseUrl(server_ip)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(MyMoneyApi::class.java)
     }
-
 }

@@ -1,6 +1,6 @@
 package com.example.mymoney.api
 
-import com.example.mymoney.api.models.Transaction
+import com.example.mymoney.models.Transaction
 import retrofit2.Response
 import retrofit2.http.GET
 

@@ -3,11 +3,7 @@ package com.example.mymoney.activities
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.mymoney.api.MyMoneyApi
-import com.example.mymoney.api.RetrofitInstance
 import com.example.mymoney.databinding.ActivitySettingsBinding
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SettingsActivity : AppCompatActivity() {
     lateinit var binding : ActivitySettingsBinding

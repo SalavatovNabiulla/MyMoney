@@ -6,14 +6,65 @@
     android:layout_height="match_parent"
     tools:context=".activities.TransactionsActivity">
 
-    <ListView
-        android:id="@+id/transactions"
-        android:layout_width="359dp"
-        android:layout_height="638dp"
+    <Button
+        android:id="@+id/create_transaction_button"
+        android:layout_width="259dp"
+        android:layout_height="57dp"
+        android:layout_marginBottom="4dp"
+        android:text="Создать транзакцию"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/transactions" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/transactions"
+        android:layout_width="383dp"
+        android:layout_height="602dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/id_label"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:text="ID"
+        app:layout_constraintBottom_toTopOf="@+id/transactions"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/type_label"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:text="Тип"
+        app:layout_constraintBottom_toTopOf="@+id/transactions"
+        app:layout_constraintStart_toEndOf="@+id/id_label" />
+
+    <TextView
+        android:id="@+id/wallet_label"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:text="Кошелёк"
+        app:layout_constraintBottom_toTopOf="@+id/transactions"
+        app:layout_constraintStart_toEndOf="@+id/type_label" />
+
+    <TextView
+        android:id="@+id/sum_label"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:text="Сумма"
+        app:layout_constraintBottom_toTopOf="@+id/transactions"
+        app:layout_constraintStart_toEndOf="@+id/wallet_label" />
+
+    <TextView
+        android:id="@+id/income_revenue_item"
+        android:layout_width="103dp"
+        android:layout_height="wrap_content"
+        android:text="Статья"
+        app:layout_constraintBottom_toTopOf="@+id/transactions"
+        app:layout_constraintStart_toEndOf="@+id/sum_label" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
