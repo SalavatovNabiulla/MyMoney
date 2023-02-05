@@ -16,6 +16,8 @@ class TransactionsActivity : AppCompatActivity() {
     private lateinit var binding : ActivityTransactionsBinding
     lateinit var sharedPref : SharedPreferences
     var transactions_list = ArrayList<Transaction>()
+    var retrofitInstance = RetrofitInstance("0.0.0.0")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTransactionsBinding.inflate(layoutInflater)
@@ -29,7 +31,7 @@ class TransactionsActivity : AppCompatActivity() {
         transactions_list.clear()
         lifecycleScope.launchWhenCreated {
             try {
-                var response = RetrofitInstance.api.getTransactions()
+                var response = retrofitInstance.api.getTransactions()
                 for(i in response.body()!!){
                     transactions_list.add(i)
                 }
@@ -43,7 +45,7 @@ class TransactionsActivity : AppCompatActivity() {
     }
     fun update_ip(){
         sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
-        RetrofitInstance.server_ip = sharedPref.getString("server_ip","").toString()
+        retrofitInstance = RetrofitInstance(sharedPref.getString("server_ip","0.0.0.0").toString())
     }
 
 }
