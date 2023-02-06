@@ -1,6 +1,8 @@
 package com.example.mymoney.activities
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,6 +23,13 @@ class TransactionsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTransactionsBinding.inflate(layoutInflater)
+        binding.createTransactionButton.setOnClickListener {
+            Intent(this,TransactionActivity::class.java).also {
+                startActivity(it)
+            }
+        }
+
+        //
         update_list()
         setContentView(binding.root)
     }

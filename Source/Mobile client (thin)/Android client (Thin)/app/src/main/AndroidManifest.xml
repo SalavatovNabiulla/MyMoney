@@ -12,6 +12,7 @@
         android:theme="@style/Theme.MyMoney">
         <activity android:name=".activities.SettingsActivity"/>
         <activity android:name=".activities.TransactionsActivity"/>
+        <activity android:name=".activities.TransactionActivity"/>
         <activity
             android:name=".activities.MainMenuActivity"
             android:exported="true">
