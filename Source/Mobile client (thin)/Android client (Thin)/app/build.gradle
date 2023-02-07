@@ -57,4 +57,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
 
+    //okhttp
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+
 }
