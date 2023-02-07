@@ -12,6 +12,8 @@ import com.example.mymoney.models.Cost_item
 import com.example.mymoney.models.Revenue_item
 import com.example.mymoney.models.Transaction_type
 import com.example.mymoney.models.Wallet
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class TransactionActivity : AppCompatActivity() {
@@ -62,7 +64,7 @@ class TransactionActivity : AppCompatActivity() {
     fun select_wallet(){
         var options = arrayListOf<String>()
         for(i in wallets){
-            options.add(i.title)
+            options.add(i.title.toString() +" - "+ i.balance.toString())
         }
         var type_dialog = AlertDialog.Builder(this)
         var index = 0
@@ -114,15 +116,19 @@ class TransactionActivity : AppCompatActivity() {
     }
     fun get_wallets(){
         wallets.clear()
-        lifecycleScope.launchWhenCreated {
-            try {
-                var response = retrofitInstance.api.getWallets()
-                for(i in response.body()!!){
-                    wallets.add(i)
-                }
-            }catch (e: Exception){
-                //
-            }
+//        lifecycleScope.launchWhenCreated {
+//            try {
+//                var response = retrofitInstance.api.getWallets()
+//                for(i in response.body()!!){
+//                    wallets.add(i)
+//                }
+//            }catch (e: Exception){
+//                //
+//            }
+//        }
+        sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
+        GlobalScope.launch {
+            wallets = Wallet.get_wallets(sharedPref.getString("server_ip","0.0.0.0").toString())
         }
     }
     fun get_revenue_items(){

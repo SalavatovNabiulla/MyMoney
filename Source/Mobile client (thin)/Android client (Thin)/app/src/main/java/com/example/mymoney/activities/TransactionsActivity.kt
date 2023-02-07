@@ -12,13 +12,14 @@ import com.example.mymoney.adapters.TransactionAdapter
 import com.example.mymoney.api.RetrofitInstance
 import com.example.mymoney.databinding.ActivityTransactionsBinding
 import com.example.mymoney.models.Transaction
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.lang.Exception
 
 class TransactionsActivity : AppCompatActivity() {
     private lateinit var binding : ActivityTransactionsBinding
     lateinit var sharedPref : SharedPreferences
     var transactions_list = ArrayList<Transaction>()
-    var retrofitInstance = RetrofitInstance("0.0.0.0")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,33 +29,23 @@ class TransactionsActivity : AppCompatActivity() {
                 startActivity(it)
             }
         }
-
-        //
-        update_list()
+        update_data()
         setContentView(binding.root)
     }
 
-
     fun update_list(){
-        update_ip()
-        transactions_list.clear()
-        lifecycleScope.launchWhenCreated {
-            try {
-                var response = retrofitInstance.api.getTransactions()
-                for(i in response.body()!!){
-                    transactions_list.add(i)
-                }
-                binding.transactions.adapter = TransactionAdapter(transactions_list)
-                binding.transactions.layoutManager = LinearLayoutManager(this@TransactionsActivity)
-            }catch (e: Exception){
-                //
+        binding.transactions.adapter = TransactionAdapter(transactions_list)
+        binding.transactions.layoutManager = LinearLayoutManager(this@TransactionsActivity)
+    }
+
+    fun update_data(){
+        sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
+        GlobalScope.launch {
+            transactions_list = Transaction.Companion.get_transactions(sharedPref.getString("server_ip","0.0.0.0").toString())
+            runOnUiThread {
+                update_list()
             }
         }
 
     }
-    fun update_ip(){
-        sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
-        retrofitInstance = RetrofitInstance(sharedPref.getString("server_ip","0.0.0.0").toString())
-    }
-
 }
