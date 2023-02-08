@@ -39,7 +39,7 @@ class Wallets_balance(server_url : String){
             return wallets_balances
         }
 
-        fun get_wallets_balance(server_url: String, wallet_id: Int?): Wallets_balance {
+        fun get_wallets_balance(server_url: String = "", wallet_id: Int = 0): Wallets_balance {
             var wallets_balance = Wallets_balance(server_url)
             //
             var json = JSONObject()

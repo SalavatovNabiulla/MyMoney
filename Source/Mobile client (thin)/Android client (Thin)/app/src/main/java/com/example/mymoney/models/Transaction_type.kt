@@ -1,5 +1,6 @@
 package com.example.mymoney.models
 
+import android.text.Editable
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -11,7 +12,7 @@ class Transaction_type(server_url : String){
     var server_url = server_url
     var http_client = OkHttpClient()
     //
-    var id: Int? = null
+    var id: Int = 0
     var title: String? = null
     //
     fun delete(){
@@ -43,7 +44,7 @@ class Transaction_type(server_url : String){
     companion object{
         var http_client = OkHttpClient()
 
-        fun get_transactions_types(server_url: String): ArrayList<Transaction_type> {
+        fun get_transactions_types(server_url: String = ""): ArrayList<Transaction_type> {
             var transactions_types = ArrayList<Transaction_type>()
             //
             val http_request: Request = Request.Builder()
@@ -62,7 +63,7 @@ class Transaction_type(server_url : String){
             return transactions_types
         }
 
-        fun get_transactions_type(server_url: String, id: Int?): Transaction_type {
+        fun get_transactions_type(server_url: String = "", id: Int = 0,title: String = ""): Transaction_type {
             var transactions_type = Transaction_type(server_url)
             //
             var json = JSONObject()

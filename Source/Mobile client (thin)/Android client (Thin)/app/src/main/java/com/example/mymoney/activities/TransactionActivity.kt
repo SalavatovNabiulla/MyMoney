@@ -5,12 +5,8 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.example.mymoney.databinding.ActivityTransactionBinding
-import com.example.mymoney.models.Cost_item
-import com.example.mymoney.models.Revenue_item
-import com.example.mymoney.models.Transaction_type
-import com.example.mymoney.models.Wallet
+import com.example.mymoney.models.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.lang.Exception
@@ -21,6 +17,7 @@ class TransactionActivity : AppCompatActivity() {
     var wallets = ArrayList<Wallet>()
     var revenue_items = ArrayList<Revenue_item>()
     var cost_items = ArrayList<Cost_item>()
+    lateinit var transaction: Transaction
     lateinit var sharedPref : SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,9 +26,22 @@ class TransactionActivity : AppCompatActivity() {
         binding.selectTransactionType.setOnClickListener {select_transaction_type()}
         binding.selectWallet.setOnClickListener { select_wallet() }
         binding.selectItem.setOnClickListener { select_item() }
+        binding.saveTransaction.setOnClickListener { save_transaction() }
         update_data()
         setContentView(binding.root)
     }
+
+    fun save_transaction(){
+        if(transaction.id != 0){
+            //
+        }else{
+//            binding.transactionTypeEdit.setText(transaction.type_id.toString())
+//            binding.transactionWalletEdit.setText(transaction.wallet_id.toString())
+//            binding.transactionSumEdit.setText(transaction.sum.toString())
+//            binding.transactionItemEdit.setText(transaction.type_id.toString())
+        }
+    }
+
     fun select_item(){
         var options = arrayListOf<String>()
         var current_item = binding.transactionItemEdit.text.toString()
@@ -106,7 +116,7 @@ class TransactionActivity : AppCompatActivity() {
         transaction_types.clear()
         sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
         GlobalScope.launch {
-            transaction_types = Transaction_type.get_transactions_types(sharedPref.getString("server_ip","0.0.0.0").toString())
+            transaction_types = Transaction_type.get_transactions_types(server_url = sharedPref.getString("server_ip","0.0.0.0").toString())
         }
     }
 
@@ -114,7 +124,7 @@ class TransactionActivity : AppCompatActivity() {
         wallets.clear()
         sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
         GlobalScope.launch {
-            wallets = Wallet.get_wallets(sharedPref.getString("server_ip","0.0.0.0").toString())
+            wallets = Wallet.get_wallets(server_url = sharedPref.getString("server_ip","0.0.0.0").toString())
         }
     }
 
@@ -122,7 +132,7 @@ class TransactionActivity : AppCompatActivity() {
         revenue_items.clear()
         sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
         GlobalScope.launch {
-            revenue_items = Revenue_item.get_revenue_items(sharedPref.getString("server_ip","0.0.0.0").toString())
+            revenue_items = Revenue_item.get_revenue_items(server_url = sharedPref.getString("server_ip","0.0.0.0").toString())
         }
     }
 
@@ -130,15 +140,30 @@ class TransactionActivity : AppCompatActivity() {
         cost_items.clear()
         sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
         GlobalScope.launch {
-            cost_items = Cost_item.get_cost_items(sharedPref.getString("server_ip","0.0.0.0").toString())
+            cost_items = Cost_item.get_cost_items(server_url = sharedPref.getString("server_ip","0.0.0.0").toString())
         }
     }
 
+    fun get_current_transaction(){
+        transaction = Transaction.get_transaction(server_url = sharedPref.getString("server_ip","0.0.0.0").toString(),id=intent.getIntExtra("EXTRA_ID",0))
+    }
+
     fun update_data(){
-        get_transaction_types()
-        get_wallets()
-        get_revenue_items()
-        get_cost_items()
+        GlobalScope.launch{
+            get_transaction_types()
+            get_wallets()
+            get_revenue_items()
+            get_cost_items()
+            get_current_transaction()
+            runOnUiThread{
+                if(transaction.id != 0){
+                    binding.transactionIdEdit.setText(transaction.id.toString())
+                    binding.transactionTypeEdit.setText(transaction.type.title.toString())
+                    binding.transactionWalletEdit.setText(transaction.wallet.title.toString())
+                    binding.transactionSumEdit.setText(transaction.sum.toString())
+                }
+            }
+        }
     }
 
 

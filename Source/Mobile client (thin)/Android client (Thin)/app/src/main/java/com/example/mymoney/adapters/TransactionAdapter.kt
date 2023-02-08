@@ -1,12 +1,16 @@
 package com.example.mymoney.adapters
 
+import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymoney.R
+import com.example.mymoney.activities.TransactionActivity
 import com.example.mymoney.models.Transaction
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -17,7 +21,9 @@ class TransactionAdapter(
 
     var server_ip = "0.0.0.0"
 
-    class ViewHolder(view: View,server_ip : String) : RecyclerView.ViewHolder(view) {
+    lateinit var context: Context
+
+    class ViewHolder(view: View,server_ip : String = "") : RecyclerView.ViewHolder(view) {
         val id_text: TextView
         val type_text : TextView
         val wallet_text : TextView
@@ -36,8 +42,9 @@ class TransactionAdapter(
     fun onItemClick(view : ViewHolder){
         var id = view.id_text.text.toString()
         GlobalScope.launch {
-            var transaction = Transaction.get_transaction(view.server_ip,id.toInt())
-//            Toast.makeText(view.itemView.context,transaction.sum.toString(),Toast.LENGTH_SHORT).show()
+            var Intent = Intent(context,TransactionActivity::class.java)
+            Intent.putExtra("EXTRA_ID",id.toInt())
+            context.startActivity(Intent)
         }
     }
 
@@ -55,13 +62,13 @@ class TransactionAdapter(
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         var element = dataSet[position]
         viewHolder.id_text.text = element.id.toString()
-        viewHolder.type_text.text = element.type_id.toString()
-        viewHolder.wallet_text.text = element.wallet_id.toString()
+        viewHolder.type_text.text = element.type.id.toString()
+        viewHolder.wallet_text.text = element.wallet.id.toString()
         viewHolder.sum_text.text = element.sum.toString()
-        if(element.cost_item_id == null){
-            viewHolder.cost_revenue_item_text.text = element.revenue_item_id.toString()
+        if(element.isCost_itemInitialised()){
+            viewHolder.cost_revenue_item_text.text = element.cost_item.id.toString()
         }else{
-            viewHolder.cost_revenue_item_text.text = element.cost_item_id.toString()
+            viewHolder.cost_revenue_item_text.text = element.revenue_item.id.toString()
         }
     }
 

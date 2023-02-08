@@ -56,7 +56,7 @@ class Wallets_type(server_url : String){
     companion object{
         var http_client = OkHttpClient()
 
-        fun get_wallets_types(server_url: String): ArrayList<Wallets_type> {
+        fun get_wallets_types(server_url: String = ""): ArrayList<Wallets_type> {
             var wallets_types = ArrayList<Wallets_type>()
             //
             val http_request: Request = Request.Builder()
@@ -75,7 +75,7 @@ class Wallets_type(server_url : String){
             return wallets_types
         }
 
-        fun get_wallets_type(server_url: String, id: Int?): Wallets_type {
+        fun get_wallets_type(server_url: String = "", id: Int = 0,title: String = ""): Wallets_type {
             var wallets_type = Wallets_type(server_url)
             //
             var json = JSONObject()
@@ -89,7 +89,7 @@ class Wallets_type(server_url : String){
             var response = call.execute()
             var json_data = JSONObject(response?.body?.string().toString())
             wallets_type.id = json_data.getInt("id")
-            wallets_type.title = json_data.getString("sum")
+            wallets_type.title = json_data.getString("title")
             return wallets_type
         }
     }

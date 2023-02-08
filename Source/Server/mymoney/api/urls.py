@@ -14,7 +14,7 @@ urlpatterns = [
     path("update_wallet/",views.update_wallet),
     path("get_wallets_balance/",views.get_wallets_balance),
     path("get_wallets_balances/", views.get_wallets_balances),
-    path("get_transactions_type",views.get_transactions_type),
+    path("get_transactions_type/",views.get_transactions_type),
     path("get_transactions_types/", views.get_transactions_types),
     path("create_transactions_type/", views.create_transactions_type),
     path("delete_transactions_type/",views.delete_transactions_type),

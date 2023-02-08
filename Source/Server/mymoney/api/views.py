@@ -29,10 +29,7 @@ def get_wallets_types(request):
 
 @api_view(["POST"])
 def get_wallets_type(request):
-    try:
-        wallets_type = wallets_types.objects.get(pk=request.data["id"])
-    except:
-        wallets_type = wallets_types()
+    wallets_type = wallets_types.objects.get(pk=request.data["id"])
     serializer = wallets_types_serializer(wallets_type)
     return Response(serializer.data)
 
@@ -76,10 +73,7 @@ def get_wallets(request):
 
 @api_view(["POST"])
 def get_wallet(request):
-    try:
-        wallet = wallets.objects.get(pk=request.data["id"])
-    except:
-        wallet = wallets()
+    wallet = wallets.objects.get(pk=request.data["id"])
     serializer = wallets_serializer(wallet)
     return Response(serializer.data)
 
@@ -91,10 +85,7 @@ def get_wallets_balances(request):
 
 @api_view(["POST"])
 def get_wallets_balance(request):
-    try:
-        wallets_balance = wallets_balances.objects.get(wallet_id=request.data["wallet_id"])
-    except:
-        wallets_balance = wallets_balances()
+    wallets_balance = wallets_balances.objects.get(wallet_id=request.data["wallet_id"])
     serializer = wallets_balances_serializer(wallets_balance)
     return Response(serializer.data)
 
@@ -124,10 +115,7 @@ def get_transactions_types(request):
 
 @api_view(["POST"])
 def get_transactions_type(request):
-    try:
-        transactions_type = transactions_types.objects.get(pk=request.data["id"])
-    except:
-        transactions_type = transactions_types()
+    transactions_type = transactions_types.objects.get(pk=request.data["id"])
     serializer = transactions_types_serializer(transactions_type)
     return Response(serializer.data)
 
@@ -207,10 +195,7 @@ def get_transactions(request):
 
 @api_view(["POST"])
 def get_transaction(request):
-    try:
-        transaction = transactions.objects.get(pk=request.data["id"])
-    except:
-        transaction = transactions()
+    transaction = transactions.objects.get(pk=request.data["id"])
     serializer = transactions_serializer(transaction)
     return Response(serializer.data)
 
@@ -227,10 +212,7 @@ def get_revenue_items(request):
 
 @api_view(["POST"])
 def get_revenue_item(request):
-    try:
-        revenue_item = revenue_items.objects.get(pk=request.data["id"])
-    except:
-        revenue_item = revenue_items()
+    revenue_item = revenue_items.objects.get(pk=request.data["id"])
     serializer = revenue_items_serializer(revenue_item)
     return Response(serializer.data)
 
@@ -268,10 +250,7 @@ def get_cost_items(request):
 
 @api_view(["POST"])
 def get_cost_item(request):
-    try:
-        cost_item = cost_items.objects.get(pk=request.data["id"])
-    except:
-        cost_item = cost_items()
+    cost_item = cost_items.objects.get(pk=request.data["id"])
     serializer = cost_items_serializer(cost_item)
     return Response(serializer.data)
 

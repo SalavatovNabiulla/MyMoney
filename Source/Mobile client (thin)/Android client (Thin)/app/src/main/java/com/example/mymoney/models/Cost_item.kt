@@ -75,7 +75,7 @@ class Cost_item(server_url : String){
             return cost_items
         }
 
-        fun get_cost_item(server_url: String, id: Int?): Cost_item {
+        fun get_cost_item(server_url: String = "", id: Int = 0, title : String = ""): Cost_item {
             var cost_item = Cost_item(server_url)
             //
             var json = JSONObject()

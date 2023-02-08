@@ -75,7 +75,7 @@ class Revenue_item(server_url : String){
             return revenue_items
         }
 
-        fun get_revenue_item(server_url: String, id: Int?): Revenue_item {
+        fun get_revenue_item(server_url: String = "", id: Int = 0, title : String = ""): Revenue_item {
             var revenue_item = Revenue_item(server_url)
             //
             var json = JSONObject()

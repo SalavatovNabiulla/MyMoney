@@ -20,11 +20,12 @@ class TransactionsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTransactionsBinding.inflate(layoutInflater)
-//        binding.createTransactionButton.setOnClickListener {
-//            Intent(this,TransactionActivity::class.java).also {
-//                startActivity(it)
-//            }
-//        }
+        binding.createTransactionButton.setOnClickListener {
+            Intent(this,TransactionActivity::class.java).also {
+                it.putExtra("EXTRA_ID",0)
+                startActivity(it)
+            }
+        }
         update_data()
         setContentView(binding.root)
     }
@@ -33,6 +34,7 @@ class TransactionsActivity : AppCompatActivity() {
         sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
         binding.transactions.adapter = TransactionAdapter(transactions_list).also {
             it.server_ip = sharedPref.getString("server_ip","0.0.0.0").toString()
+            it.context = this
         }
         binding.transactions.layoutManager = LinearLayoutManager(this@TransactionsActivity)
     }
@@ -40,7 +42,7 @@ class TransactionsActivity : AppCompatActivity() {
     fun update_data(){
         sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
         GlobalScope.launch {
-            transactions_list = Transaction.Companion.get_transactions(sharedPref.getString("server_ip","0.0.0.0").toString())
+            transactions_list = Transaction.Companion.get_transactions(server_url = sharedPref.getString("server_ip","0.0.0.0").toString())
             runOnUiThread {
                 update_list()
             }

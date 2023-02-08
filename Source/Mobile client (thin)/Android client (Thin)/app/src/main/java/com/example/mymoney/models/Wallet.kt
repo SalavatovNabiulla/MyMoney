@@ -12,16 +12,16 @@ class Wallet(server_url : String){
     var server_url = server_url
     var http_client = OkHttpClient()
     //
-    var id: Int? = null
+    var id: Int = 0
     var title: String? = null
-    var type_id: Int? = null
+    lateinit var type : Wallets_type
     var balance: Int? = null
     //
     fun update(){
         var json_data = JSONObject()
         json_data.put("id",this.id)
         json_data.put("title",this.title)
-        json_data.put("type_id",this.type_id)
+        json_data.put("type_id",this.type.id)
         //
         val http_request: Request = Request.Builder()
             .url(server_url + "/api/update_wallet/")
@@ -46,7 +46,7 @@ class Wallet(server_url : String){
     fun create(){
         var json_data = JSONObject()
         json_data.put("title",this.title)
-        json_data.put("type_id",this.type_id)
+        json_data.put("type_id",this.type.id)
         //
         val http_request: Request = Request.Builder()
             .url(server_url + "/api/create_wallet/")
@@ -60,13 +60,13 @@ class Wallet(server_url : String){
     }
 
     fun update_balance() {
-        var wallets_balance = Wallets_balance.get_wallets_balance(server_url, this.id)
+        var wallets_balance = Wallets_balance.get_wallets_balance(server_url = server_url, wallet_id = this.id)
         this.balance = wallets_balance.balance
     }
 
     companion object{
         var http_client = OkHttpClient()
-        fun get_wallets(server_url: String): ArrayList<Wallet> {
+        fun get_wallets(server_url: String = ""): ArrayList<Wallet> {
             var wallets = ArrayList<Wallet>()
             //
             val http_request: Request = Request.Builder()
@@ -80,13 +80,13 @@ class Wallet(server_url : String){
                 var new_wallet = Wallet(server_url)
                 new_wallet.id = current_object.getInt("id")
                 new_wallet.title = current_object.getString("title")
-                new_wallet.type_id = current_object.getInt("type_id")
+                new_wallet.type = Wallets_type.get_wallets_type(server_url = server_url,id = current_object.getInt("type_id"))
                 new_wallet.update_balance()
                 wallets.add(new_wallet)
             }
             return wallets
         }
-        fun get_wallet(server_url: String, id : Int): Wallet {
+        fun get_wallet(server_url: String = "", id : Int = 0, title : String = ""): Wallet {
             var wallet = Wallet(server_url)
             //
             var json = JSONObject()
@@ -101,7 +101,7 @@ class Wallet(server_url : String){
             var json_data = JSONObject(response?.body?.string().toString())
             wallet.id = json_data.getInt("id")
             wallet.title = json_data.getString("title")
-            wallet.type_id = json_data.getInt("type_id")
+            wallet.type = Wallets_type.get_wallets_type(server_url = server_url,id = json_data.getInt("type_id"))
             wallet.update_balance()
             return wallet
         }
