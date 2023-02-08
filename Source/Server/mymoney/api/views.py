@@ -20,10 +20,20 @@ def create_wallets_type(request):
         serializer.save()
     return Response(serializer.data)
 
+
 @api_view(['GET'])
 def get_wallets_types(request):
     wallets_types_list = wallets_types.objects.all()
     serializer = wallets_types_serializer(wallets_types_list,many=True)
+    return Response(serializer.data)
+
+@api_view(["POST"])
+def get_wallets_type(request):
+    try:
+        wallets_type = wallets_types.objects.get(pk=request.data["id"])
+    except:
+        wallets_type = wallets_types()
+    serializer = wallets_types_serializer(wallets_type)
     return Response(serializer.data)
 
 @api_view(['POST'])
@@ -64,11 +74,30 @@ def get_wallets(request):
     serializer = wallets_serializer(wallets_list,many=True)
     return Response(serializer.data)
 
+@api_view(["POST"])
+def get_wallet(request):
+    try:
+        wallet = wallets.objects.get(pk=request.data["id"])
+    except:
+        wallet = wallets()
+    serializer = wallets_serializer(wallet)
+    return Response(serializer.data)
+
 @api_view(['GET'])
 def get_wallets_balances(request):
     wallets_balances_list = wallets_balances.objects.all()
     serializer = wallets_balances_serializer(wallets_balances_list,many=True)
     return  Response(serializer.data)
+
+@api_view(["POST"])
+def get_wallets_balance(request):
+    try:
+        wallets_balance = wallets_balances.objects.get(wallet_id=request.data["wallet_id"])
+    except:
+        wallets_balance = wallets_balances()
+    serializer = wallets_balances_serializer(wallets_balance)
+    return Response(serializer.data)
+
 ##--wallets
 
 ##++transactions
@@ -91,6 +120,15 @@ def create_transactions_type(request):
 def get_transactions_types(request):
     transactions_types_list = transactions_types.objects.all()
     serializer = transactions_types_serializer(transactions_types_list,many=True)
+    return Response(serializer.data)
+
+@api_view(["POST"])
+def get_transactions_type(request):
+    try:
+        transactions_type = transactions_types.objects.get(pk=request.data["id"])
+    except:
+        transactions_type = transactions_types()
+    serializer = transactions_types_serializer(transactions_type)
     return Response(serializer.data)
 
 @api_view(['POST'])
@@ -167,6 +205,16 @@ def get_transactions(request):
     serializer = transactions_serializer(transactions_list,many=True)
     return Response(serializer.data)
 
+@api_view(["POST"])
+def get_transaction(request):
+    try:
+        transaction = transactions.objects.get(pk=request.data["id"])
+    except:
+        transaction = transactions()
+    serializer = transactions_serializer(transaction)
+    return Response(serializer.data)
+
+
 ##--transactions
 
 ##++revenue items
@@ -175,6 +223,15 @@ def get_transactions(request):
 def get_revenue_items(request):
     revenue_items_list = revenue_items.objects.all()
     serializer = revenue_items_serializer(revenue_items_list,many=True)
+    return Response(serializer.data)
+
+@api_view(["POST"])
+def get_revenue_item(request):
+    try:
+        revenue_item = revenue_items.objects.get(pk=request.data["id"])
+    except:
+        revenue_item = revenue_items()
+    serializer = revenue_items_serializer(revenue_item)
     return Response(serializer.data)
 
 @api_view(['POST'])
@@ -208,6 +265,16 @@ def get_cost_items(request):
     cost_items_list = cost_items.objects.all()
     serializer = cost_items_serializer(cost_items_list,many=True)
     return Response(serializer.data)
+
+@api_view(["POST"])
+def get_cost_item(request):
+    try:
+        cost_item = cost_items.objects.get(pk=request.data["id"])
+    except:
+        cost_item = cost_items()
+    serializer = cost_items_serializer(cost_item)
+    return Response(serializer.data)
+
 
 @api_view(['POST'])
 def create_cost_item(request):

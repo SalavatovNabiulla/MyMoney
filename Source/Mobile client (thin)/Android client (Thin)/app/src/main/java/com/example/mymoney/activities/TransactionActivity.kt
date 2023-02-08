@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.mymoney.api.RetrofitInstance
 import com.example.mymoney.databinding.ActivityTransactionBinding
 import com.example.mymoney.models.Cost_item
 import com.example.mymoney.models.Revenue_item
@@ -22,7 +21,6 @@ class TransactionActivity : AppCompatActivity() {
     var wallets = ArrayList<Wallet>()
     var revenue_items = ArrayList<Revenue_item>()
     var cost_items = ArrayList<Cost_item>()
-    var retrofitInstance = RetrofitInstance("0.0.0.0")
     lateinit var sharedPref : SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,11 +37,11 @@ class TransactionActivity : AppCompatActivity() {
         var current_item = binding.transactionItemEdit.text.toString()
         if(current_item == "income"){
             for(i in revenue_items){
-                options.add(i.title)
+                options.add(i.title.toString())
             }
         }else{
             for(i in cost_items){
-                options.add(i.title)
+                options.add(i.title.toString())
             }
         }
         var type_dialog = AlertDialog.Builder(this)
@@ -61,6 +59,7 @@ class TransactionActivity : AppCompatActivity() {
         type_dialog.create()
         type_dialog.show()
     }
+
     fun select_wallet(){
         var options = arrayListOf<String>()
         for(i in wallets){
@@ -81,10 +80,11 @@ class TransactionActivity : AppCompatActivity() {
         type_dialog.create()
         type_dialog.show()
     }
+
     fun select_transaction_type(){
         var options = arrayListOf<String>()
         for(i in transaction_types){
-            options.add(i.title)
+            options.add(i.title.toString())
         }
         var type_dialog = AlertDialog.Builder(this)
         var index = 0
@@ -101,73 +101,45 @@ class TransactionActivity : AppCompatActivity() {
         type_dialog.create()
         type_dialog.show()
     }
+
     fun get_transaction_types(){
         transaction_types.clear()
-        lifecycleScope.launchWhenCreated {
-            try {
-                var response = retrofitInstance.api.getTransactionsTypes()
-                for(i in response.body()!!){
-                    transaction_types.add(i)
-                }
-            }catch (e: Exception){
-                //
-            }
+        sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
+        GlobalScope.launch {
+            transaction_types = Transaction_type.get_transactions_types(sharedPref.getString("server_ip","0.0.0.0").toString())
         }
     }
+
     fun get_wallets(){
         wallets.clear()
-//        lifecycleScope.launchWhenCreated {
-//            try {
-//                var response = retrofitInstance.api.getWallets()
-//                for(i in response.body()!!){
-//                    wallets.add(i)
-//                }
-//            }catch (e: Exception){
-//                //
-//            }
-//        }
         sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
         GlobalScope.launch {
             wallets = Wallet.get_wallets(sharedPref.getString("server_ip","0.0.0.0").toString())
         }
     }
+
     fun get_revenue_items(){
         revenue_items.clear()
-        lifecycleScope.launchWhenCreated {
-            try {
-                var response = retrofitInstance.api.getRevenueItems()
-                for(i in response.body()!!){
-                    revenue_items.add(i)
-                }
-            }catch (e: Exception){
-                //
-            }
+        sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
+        GlobalScope.launch {
+            revenue_items = Revenue_item.get_revenue_items(sharedPref.getString("server_ip","0.0.0.0").toString())
         }
     }
+
     fun get_cost_items(){
         cost_items.clear()
-        lifecycleScope.launchWhenCreated {
-            try {
-                var response = retrofitInstance.api.getCostItems()
-                for(i in response.body()!!){
-                    cost_items.add(i)
-                }
-            }catch (e: Exception){
-                //
-            }
+        sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
+        GlobalScope.launch {
+            cost_items = Cost_item.get_cost_items(sharedPref.getString("server_ip","0.0.0.0").toString())
         }
     }
+
     fun update_data(){
-        update_ip()
         get_transaction_types()
         get_wallets()
         get_revenue_items()
         get_cost_items()
+    }
 
-    }
-    fun update_ip(){
-        sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
-        retrofitInstance = RetrofitInstance(sharedPref.getString("server_ip","0.0.0.0").toString())
-    }
 
 }

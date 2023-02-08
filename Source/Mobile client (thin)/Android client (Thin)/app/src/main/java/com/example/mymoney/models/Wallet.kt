@@ -1,7 +1,9 @@
 package com.example.mymoney.models
 
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -15,18 +17,56 @@ class Wallet(server_url : String){
     var type_id: Int? = null
     var balance: Int? = null
     //
-    fun update_balance(){
-        var wallets_balances = Wallets_balance.get_wallets_balances(server_url)
-        for(i in wallets_balances){
-            if(i.wallet_id.toString() == this.id.toString()){
-                this.balance = i.balance
-            }
-        }
+    fun update(){
+        var json_data = JSONObject()
+        json_data.put("id",this.id)
+        json_data.put("title",this.title)
+        json_data.put("type_id",this.type_id)
+        //
+        val http_request: Request = Request.Builder()
+            .url(server_url + "/api/update_wallet/")
+            .post(json_data.toString().toRequestBody("application/json".toMediaType()))
+            .build()
+        var call = http_client.newCall(http_request)
+        var response = call.execute()
     }
-    //
+
+    fun delete(){
+        var json_data = JSONObject()
+        json_data.put("id",this.id)
+        //
+        val http_request: Request = Request.Builder()
+            .url(server_url + "/api/delete_wallet/")
+            .post(json_data.toString().toRequestBody("application/json".toMediaType()))
+            .build()
+        var call = http_client.newCall(http_request)
+        var response = call.execute()
+    }
+
+    fun create(){
+        var json_data = JSONObject()
+        json_data.put("title",this.title)
+        json_data.put("type_id",this.type_id)
+        //
+        val http_request: Request = Request.Builder()
+            .url(server_url + "/api/create_wallet/")
+            .post(json_data.toString().toRequestBody("application/json".toMediaType()))
+            .build()
+        var call = http_client.newCall(http_request)
+        var response = call.execute()
+        var json_result = JSONObject(response?.body?.string().toString())
+        this.id = json_result.getInt("id")
+        this.update_balance()
+    }
+
+    fun update_balance() {
+        var wallets_balance = Wallets_balance.get_wallets_balance(server_url, this.id)
+        this.balance = wallets_balance.balance
+    }
+
     companion object{
+        var http_client = OkHttpClient()
         fun get_wallets(server_url: String): ArrayList<Wallet> {
-            var http_client = OkHttpClient()
             var wallets = ArrayList<Wallet>()
             //
             val http_request: Request = Request.Builder()
@@ -45,6 +85,25 @@ class Wallet(server_url : String){
                 wallets.add(new_wallet)
             }
             return wallets
+        }
+        fun get_wallet(server_url: String, id : Int): Wallet {
+            var wallet = Wallet(server_url)
+            //
+            var json = JSONObject()
+            json.put("id",id)
+            //
+            val http_request: Request = Request.Builder()
+                .url(server_url + "/api/get_wallet/")
+                .post(json.toString().toRequestBody("application/json".toMediaType()))
+                .build()
+            var call = http_client.newCall(http_request)
+            var response = call.execute()
+            var json_data = JSONObject(response?.body?.string().toString())
+            wallet.id = json_data.getInt("id")
+            wallet.title = json_data.getString("title")
+            wallet.type_id = json_data.getInt("type_id")
+            wallet.update_balance()
+            return wallet
         }
     }
 }
