@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.provider.Settings.Global
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mymoney.databinding.ActivityTransactionBinding
@@ -28,6 +29,19 @@ class TransactionActivity : AppCompatActivity() {
         binding.selectWallet.setOnClickListener { select_wallet() }
         binding.selectItem.setOnClickListener { select_item() }
         binding.saveTransaction.setOnClickListener { save_transaction() }
+        binding.deleteTransaction.setOnClickListener {
+            var alertDialog = AlertDialog.Builder(this)
+            alertDialog.setTitle("Удаление транзакции")
+            alertDialog.setMessage("Подвердите удаление транзакции!")
+            alertDialog.setPositiveButton("Да"){dialog,i ->
+                Toast.makeText(this,"Транзакция успешно удалена!",Toast.LENGTH_LONG).show()
+                delete_transaction()
+            }
+            alertDialog.setNegativeButton("Нет"){dialog,i ->
+                //
+            }
+            alertDialog.show()
+        }
         update_data()
         setContentView(binding.root)
     }
@@ -52,6 +66,15 @@ class TransactionActivity : AppCompatActivity() {
                 current_transaction.create()
             }
             finish()
+        }
+    }
+
+    fun delete_transaction(){
+        GlobalScope.launch {
+            current_transaction.delete()
+            runOnUiThread {
+                finish()
+            }
         }
     }
 
