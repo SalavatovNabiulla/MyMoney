@@ -2,50 +2,127 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="383dp"
-    android:layout_height="50dp">
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:background="#D1D0D0">
 
     <TextView
         android:id="@+id/id_text"
-        android:layout_width="70dp"
-        android:layout_height="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_width="80dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="8dp"
+        android:background="#FFFFFF"
+        android:fontFamily="@font/montserrat_bold"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="@+id/id_label"
+        app:layout_constraintStart_toEndOf="@+id/id_label"
+        app:layout_constraintTop_toTopOf="@+id/id_label"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/type_text"
-        android:layout_width="70dp"
-        android:layout_height="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/id_text"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="80dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="8dp"
+        android:background="#FFFFFF"
+        android:fontFamily="@font/montserrat_bold"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="@+id/type_label"
+        app:layout_constraintStart_toEndOf="@+id/type_label"
+        app:layout_constraintTop_toTopOf="@+id/type_label"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/wallet_text"
-        android:layout_width="70dp"
-        android:layout_height="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/type_text"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="80dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="8dp"
+        android:background="#FFFFFF"
+        android:fontFamily="@font/montserrat_bold"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="@+id/wallet_label"
+        app:layout_constraintStart_toEndOf="@+id/wallet_label"
+        app:layout_constraintTop_toTopOf="@+id/wallet_label"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/sum_text"
-        android:layout_width="70dp"
-        android:layout_height="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/wallet_text"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="300dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="8dp"
+        android:background="#FFFFFF"
+        android:fontFamily="@font/montserrat_bold"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="@+id/sum_label"
+        app:layout_constraintStart_toEndOf="@+id/sum_label"
+        app:layout_constraintTop_toTopOf="@+id/sum_label"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/cost_revenue_item_text"
-        android:layout_width="103dp"
-        android:layout_height="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/sum_text"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="80dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="8dp"
+        android:background="#FFFFFF"
+        android:fontFamily="@font/montserrat_bold"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="@+id/item_label"
+        app:layout_constraintStart_toEndOf="@+id/item_label"
+        app:layout_constraintTop_toTopOf="@+id/item_label"
         app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/id_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:text="ID:"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/type_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="56dp"
+        android:text="Тип транзакции:"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="@+id/id_text"
+        app:layout_constraintStart_toEndOf="@+id/id_text"
+        app:layout_constraintTop_toTopOf="@+id/id_text" />
+
+    <TextView
+        android:id="@+id/wallet_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="12dp"
+        android:text="Кошелёк:"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/id_label" />
+
+    <TextView
+        android:id="@+id/item_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:text="Статья:"
+        android:textColor="#000000"
+        app:layout_constraintStart_toEndOf="@+id/wallet_text"
+        app:layout_constraintTop_toBottomOf="@+id/type_label" />
+
+    <TextView
+        android:id="@+id/sum_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="12dp"
+        android:text="Сумма:"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wallet_label" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,12 +12,20 @@ class Transaction(server_url : String = ""){
     //
     var id: Int = 0
     var sum: Int = 0
-    lateinit var type: Transaction_type
-    lateinit var wallet: Wallet
-    lateinit var cost_item: Cost_item
-    lateinit var revenue_item: Revenue_item
+    var type: Transaction_type
+    var wallet: Wallet
+    var cost_item: Cost_item
+    var revenue_item: Revenue_item
     var created_time: String? = null
     //
+    init {
+        type = Transaction_type(server_url=server_url)
+        wallet = Wallet(server_url=server_url)
+        cost_item = Cost_item(server_url=server_url)
+        revenue_item = Revenue_item(server_url=server_url)
+    }
+
+
     fun update(){
         var json_data = JSONObject()
         json_data.put("id",this.id)
@@ -65,8 +73,6 @@ class Transaction(server_url : String = ""){
         this.id = json_result.getInt("id")
     }
     //
-    fun isCost_itemInitialised() = ::cost_item.isInitialized
-    //
     companion object{
         var http_client = OkHttpClient()
 
@@ -96,13 +102,13 @@ class Transaction(server_url : String = ""){
                 var json_transaction_wallet_type = JSONObject(json_transaction_wallet.getJSONObject("type").toString())
                 transaction.wallet.type.id = json_transaction_wallet_type.getInt("id")
                 transaction.wallet.type.title = json_transaction_wallet_type.getString("title")
-                var json_transaction_revenue_item = JSONObject(current_object.getJSONObject("wallet").toString())
+                var json_transaction_revenue_item = JSONObject(current_object.getJSONObject("revenue_item").toString())
                 if(json_transaction_revenue_item.length() != 0){
                     transaction.revenue_item = Revenue_item(server_url = server_url)
                     transaction.revenue_item.id = json_transaction_revenue_item.getInt("id")
                     transaction.revenue_item.title = json_transaction_revenue_item.getString("title")
                 }
-                var json_transaction_cost_item = JSONObject(current_object.getJSONObject("wallet").toString())
+                var json_transaction_cost_item = JSONObject(current_object.getJSONObject("cost_item").toString())
                 if(json_transaction_cost_item.length() != 0){
                     transaction.cost_item = Cost_item(server_url = server_url)
                     transaction.cost_item.id = json_transaction_revenue_item.getInt("id")
@@ -141,13 +147,13 @@ class Transaction(server_url : String = ""){
                 var json_transaction_wallet_type = JSONObject(json_transaction_wallet.getJSONObject("type").toString())
                 transaction.wallet.type.id = json_transaction_wallet_type.getInt("id")
                 transaction.wallet.type.title = json_transaction_wallet_type.getString("title")
-                var json_transaction_revenue_item = JSONObject(current_object.getJSONObject("wallet").toString())
+                var json_transaction_revenue_item = JSONObject(current_object.getJSONObject("revenue_item").toString())
                 if(json_transaction_revenue_item.length() != 0){
                     transaction.revenue_item = Revenue_item(server_url = server_url)
                     transaction.revenue_item.id = json_transaction_revenue_item.getInt("id")
                     transaction.revenue_item.title = json_transaction_revenue_item.getString("title")
                 }
-                var json_transaction_cost_item = JSONObject(current_object.getJSONObject("wallet").toString())
+                var json_transaction_cost_item = JSONObject(current_object.getJSONObject("cost_item").toString())
                 if(json_transaction_cost_item.length() != 0){
                     transaction.cost_item = Cost_item(server_url = server_url)
                     transaction.cost_item.id = json_transaction_revenue_item.getInt("id")

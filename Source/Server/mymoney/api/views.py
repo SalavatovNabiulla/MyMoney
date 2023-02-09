@@ -185,11 +185,14 @@ def update_transaction(request):
     current_transaction.wallet_id = wallets.objects.get(pk=int(request.data['wallet_id']))
     try:
         current_transaction.revenue_item_id = revenue_items.objects.get(pk=int(request.data['revenue_item_id']))
+        current_transaction.cost_item_id = None
     except:
         try:
             current_transaction.cost_item_id = cost_items.objects.get(pk=int(request.data['cost_item_id']))
+            current_transaction.revenue_item_id = None
         except:
-            test = 1
+            current_transaction.cost_item_id = None
+            current_transaction.revenue_item_id = None
     current_transaction.save()
     #
     new_sum = current_transaction.sum

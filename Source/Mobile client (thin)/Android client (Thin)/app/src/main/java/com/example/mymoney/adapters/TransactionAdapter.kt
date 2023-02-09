@@ -2,6 +2,8 @@ package com.example.mymoney.adapters
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,13 +79,17 @@ class TransactionAdapter(
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         var element = dataSet[position]
         viewHolder.id_text.text = element.id.toString()
-        viewHolder.type_text.text = element.type.id.toString()
-        viewHolder.wallet_text.text = element.wallet.id.toString()
+        viewHolder.type_text.text = element.type.title.toString()
+        viewHolder.wallet_text.text = element.wallet.title.toString()
         viewHolder.sum_text.text = element.sum.toString()
-        if(element.isCost_itemInitialised()){
-            viewHolder.cost_revenue_item_text.text = element.cost_item.id.toString()
+        if(element.type.title == "income"){
+            if(element.revenue_item.id != 0){
+                viewHolder.cost_revenue_item_text.text = element.revenue_item.title.toString()
+            }
         }else{
-            viewHolder.cost_revenue_item_text.text = element.revenue_item.id.toString()
+            if(element.cost_item.id != 0){
+                viewHolder.cost_revenue_item_text.text = element.cost_item.title.toString()
+            }
         }
     }
 
