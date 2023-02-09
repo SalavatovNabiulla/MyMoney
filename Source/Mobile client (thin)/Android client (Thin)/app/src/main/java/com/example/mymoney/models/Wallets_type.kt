@@ -11,8 +11,8 @@ class Wallets_type(server_url : String){
     var server_url = server_url
     var http_client = OkHttpClient()
     //
-    var id: Int? = null
-    var title: String? = null
+    var id: Int = 0
+    lateinit var title: String
     //
     fun update(){
         var json_data = JSONObject()

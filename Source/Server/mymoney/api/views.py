@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from core.models import *
 from .serializers import *
-
+from .custom_serializers import *
 #++wallets
 
 @api_view(['POST'])
@@ -46,8 +46,8 @@ def update_wallet(request):
     current_wallet.title = request.data['title']
     current_wallet.type_id = wallets_types.objects.get(pk=request.data['type_id'])
     current_wallet.save()
-    serializer = wallets_serializer(current_wallet)
-    return Response(serializer.data)
+    serializer = wallets_custom_serializer(data=current_wallet,many=False)
+    return Response(serializer.result)
 
 @api_view(['POST'])
 def delete_wallet(request):
@@ -63,19 +63,24 @@ def create_wallet(request):
         serializer.save()
         wallet = wallets.objects.get(pk=int(serializer.data['id']))
         balance = wallets_balances.objects.create(wallet_id=wallet,balance=0)
-    return Response(serializer.data)
+    serializer = wallets_custom_serializer(data=wallet, many=False)
+    return Response(serializer.result)
 
 @api_view(['GET'])
 def get_wallets(request):
     wallets_list = wallets.objects.all()
-    serializer = wallets_serializer(wallets_list,many=True)
-    return Response(serializer.data)
+    serializer = wallets_custom_serializer(data=wallets_list,many=True)
+    return Response(serializer.result)
 
 @api_view(["POST"])
 def get_wallet(request):
-    wallet = wallets.objects.get(pk=request.data["id"])
-    serializer = wallets_serializer(wallet)
-    return Response(serializer.data)
+    wallet = None
+    if request.data["id"] != 0:
+        wallet = wallets.objects.get(pk=request.data["id"])
+    elif len(request.data["title"]) != 0:
+        wallet = wallets.objects.get(title=request.data["title"])
+    serializer = wallets_custom_serializer(data=wallet, many=False)
+    return Response(serializer.result)
 
 @api_view(['GET'])
 def get_wallets_balances(request):
@@ -115,7 +120,11 @@ def get_transactions_types(request):
 
 @api_view(["POST"])
 def get_transactions_type(request):
-    transactions_type = transactions_types.objects.get(pk=request.data["id"])
+    transactions_type = None
+    if request.data["id"] != 0:
+        transactions_type = transactions_types.objects.get(pk=request.data["id"])
+    elif len(request.data["title"]) != 0:
+        transactions_type = transactions_types.objects.get(title=request.data["title"])
     serializer = transactions_types_serializer(transactions_type)
     return Response(serializer.data)
 
@@ -135,17 +144,33 @@ def delete_transaction(request):
 
 @api_view(['POST'])
 def create_transaction(request):
-    serializer = transactions_serializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        wallets_balance = wallets_balances.objects.get(wallet_id=serializer.data['wallet_id'])
-        transaction_type = transactions_types.objects.get(pk=serializer.data['type_id'])
-        if transaction_type.title == "income":
-            wallets_balance.balance = wallets_balance.balance + serializer.data['sum']
-        else:
-            wallets_balance.balance = wallets_balance.balance - serializer.data['sum']
-        wallets_balance.save(update_fields=['balance'])
-    return Response(serializer.data)
+    sum = int(request.data["sum"])
+    wallet = wallets.objects.get(pk=int(request.data["wallet_id"]))
+    type = transactions_types.objects.get(pk=int(request.data["type_id"]))
+    revenue_item = None
+    cost_item = None
+    try:
+        if request.data["revenue_item_id"] != 0:
+            revenue_item = revenue_items.objects.get(pk=request.data["revenue_item_id"])
+        elif request.data["cost_item_id"] != 0:
+            cost_item = cost_items.objects.get(pk=request.data["cost_item_id"])
+    except:
+        test = False
+
+    if cost_item != None:
+        new_transaction = transactions.objects.create(sum=sum, wallet_id=wallet, type_id=type,cost_item_id = cost_item)
+    elif revenue_item != None:
+        new_transaction = transactions.objects.create(sum=sum, wallet_id=wallet, type_id=type, revenue_item_id=revenue_item)
+    else:
+        new_transaction = transactions.objects.create(sum=sum, wallet_id=wallet, type_id=type)
+    wallets_balance = wallets_balances.objects.get(wallet_id=new_transaction.wallet_id.id)
+    if new_transaction.type_id.title == "income":
+        wallets_balance.balance = wallets_balance.balance + new_transaction.sum
+    else:
+        wallets_balance.balance = wallets_balance.balance - new_transaction.sum
+    wallets_balance.save(update_fields=['balance'])
+    serializer = transactions_custom_serializer(data=new_transaction,many=False)
+    return Response(serializer.result)
 
 @api_view(['POST'])
 def update_transaction(request):
@@ -161,7 +186,10 @@ def update_transaction(request):
     try:
         current_transaction.revenue_item_id = revenue_items.objects.get(pk=int(request.data['revenue_item_id']))
     except:
-        current_transaction.cost_item_id = cost_items.objects.get(pk=int(request.data['cost_item_id']))
+        try:
+            current_transaction.cost_item_id = cost_items.objects.get(pk=int(request.data['cost_item_id']))
+        except:
+            test = 1
     current_transaction.save()
     #
     new_sum = current_transaction.sum
@@ -184,85 +212,20 @@ def update_transaction(request):
 
     wallets_balance.save(update_fields=['balance'])
     #
-    serializer = transactions_serializer(current_transaction)
-    return Response(serializer.data)
+    serializer = transactions_custom_serializer(data=current_transaction,many=False)
+    return Response(serializer.result)
 
 @api_view(['GET'])
 def get_transactions(request):
     transactions_list = transactions.objects.all()
-    json_array = []
-    for i in transactions_list:
-        json_transaction = {}
-        json_transaction["id"] = i.id
-        json_transaction["created_time"] = i.created_time
-        json_transaction["sum"] = i.sum
-        #+
-        json_wallet = {}
-        json_wallet["id"] = i.wallet_id.id
-        json_wallet["title"] = i.wallet_id.title
-        ##+
-        json_wallet_type = {}
-        json_wallet_type["id"] = i.wallet_id.type_id.id
-        json_wallet_type["title"] = i.wallet_id.type_id.title
-        ##-
-        json_wallet["type"] = json_wallet_type
-        #-
-        json_transaction["wallet"] = json_wallet
-        json_transaction_type = {}
-        json_transaction_type["id"] = i.type_id.id
-        json_transaction_type["title"] = i.type_id.title
-        json_transaction["type"] = json_transaction_type
-        #
-        json_revenue_item = {}
-        json_cost_item = {}
-        if i.revenue_item_id != None:
-            json_revenue_item["id"] = i.revenue_item_id.id
-            json_revenue_item["title"] = i.revenue_item_id.title
-        if i.cost_item_id != None:
-            json_cost_item["id"] = i.cost_item_id.id
-            json_cost_item["title"] = i.cost_item_id.title
-        json_transaction["revenue_item"] = json_revenue_item
-        json_transaction["cost_item"] = json_cost_item
-        #
-        json_array.append(json_transaction)
-    return Response(json_array)
+    serializer = transactions_custom_serializer(data=transactions_list,many=True)
+    return Response(serializer.result)
 
 @api_view(["POST"])
 def get_transaction(request):
     transaction = transactions.objects.get(pk=request.data["id"])
-    json_transaction = {}
-    json_transaction["id"] = transaction.id
-    json_transaction["created_time"] = transaction.created_time
-    json_transaction["sum"] = transaction.sum
-    # +
-    json_wallet = {}
-    json_wallet["id"] = transaction.wallet_id.id
-    json_wallet["title"] = transaction.wallet_id.title
-    ##+
-    json_wallet_type = {}
-    json_wallet_type["id"] = transaction.wallet_id.type_id.id
-    json_wallet_type["title"] = transaction.wallet_id.type_id.title
-    ##-
-    json_wallet["type"] = json_wallet_type
-    # -
-    json_transaction["wallet"] = json_wallet
-    json_transaction_type = {}
-    json_transaction_type["id"] = transaction.type_id.id
-    json_transaction_type["title"] = transaction.type_id.title
-    json_transaction["type"] = json_transaction_type
-    #
-    json_revenue_item = {}
-    json_cost_item = {}
-    if transaction.revenue_item_id != None:
-        json_revenue_item["id"] = transaction.revenue_item_id.id
-        json_revenue_item["title"] = transaction.revenue_item_id.title
-    if transaction.cost_item_id != None:
-        json_cost_item["id"] = transaction.cost_item_id.id
-        json_cost_item["title"] = transaction.cost_item_id.title
-    json_transaction["revenue_item"] = json_revenue_item
-    json_transaction["cost_item"] = json_cost_item
-    #
-    return Response(json_transaction)
+    serializer = transactions_custom_serializer(data=transaction,many=False)
+    return Response(serializer.result)
 
 
 ##--transactions
@@ -277,7 +240,11 @@ def get_revenue_items(request):
 
 @api_view(["POST"])
 def get_revenue_item(request):
-    revenue_item = revenue_items.objects.get(pk=request.data["id"])
+    revenue_item = None
+    if request.data["id"] != 0:
+        revenue_item = revenue_items.objects.get(pk=request.data["id"])
+    elif len(request.data["title"]) != 0:
+        revenue_item = revenue_items.objects.get(title=request.data["title"])
     serializer = revenue_items_serializer(revenue_item)
     return Response(serializer.data)
 
@@ -315,7 +282,11 @@ def get_cost_items(request):
 
 @api_view(["POST"])
 def get_cost_item(request):
-    cost_item = cost_items.objects.get(pk=request.data["id"])
+    cost_item = None
+    if request.data["id"] != 0:
+        cost_item = cost_items.objects.get(pk=request.data["id"])
+    elif len(request.data["title"]) != 0:
+        cost_item = cost_items.objects.get(title=request.data["title"])
     serializer = cost_items_serializer(cost_item)
     return Response(serializer.data)
 

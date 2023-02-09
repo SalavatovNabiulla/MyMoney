@@ -11,9 +11,9 @@ class Wallets_balance(server_url : String){
     var server_url = server_url
     var http_client = OkHttpClient()
     //
-    var id: Int? = null
-    var balance: Int? = null
-    var wallet_id: Int? = null
+    var id: Int = 0
+    var balance: Int = 0
+    var wallet_id: Int = 0
     //
     //
     companion object{

@@ -11,7 +11,7 @@ class Cost_item(server_url : String){
     var server_url = server_url
     var http_client = OkHttpClient()
     //
-    var id: Int? = null
+    var id: Int = 0
     var title: String? = null
     //
     fun update(){
@@ -80,6 +80,7 @@ class Cost_item(server_url : String){
             //
             var json = JSONObject()
             json.put("id",id)
+            json.put("title",title)
             //
             val http_request: Request = Request.Builder()
                 .url(server_url + "/api/get_cost_item/")

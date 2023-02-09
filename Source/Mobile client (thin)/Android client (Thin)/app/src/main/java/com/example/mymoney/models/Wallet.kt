@@ -15,7 +15,7 @@ class Wallet(server_url : String){
     var id: Int = 0
     var title: String? = null
     lateinit var type : Wallets_type
-    var balance: Int? = null
+    var balance: Int = 0
     //
     fun update(){
         var json_data = JSONObject()
@@ -80,7 +80,12 @@ class Wallet(server_url : String){
                 var new_wallet = Wallet(server_url)
                 new_wallet.id = current_object.getInt("id")
                 new_wallet.title = current_object.getString("title")
-                new_wallet.type = Wallets_type.get_wallets_type(server_url = server_url,id = current_object.getInt("type_id"))
+                //
+                var json_wallets_type = JSONObject(current_object.getJSONObject("type").toString())
+                new_wallet.type = Wallets_type(server_url = server_url)
+                new_wallet.type.id = json_wallets_type.getInt("id")
+                new_wallet.type.title = json_wallets_type.getString("title")
+                //
                 new_wallet.update_balance()
                 wallets.add(new_wallet)
             }
@@ -91,6 +96,7 @@ class Wallet(server_url : String){
             //
             var json = JSONObject()
             json.put("id",id)
+            json.put("title",title)
             //
             val http_request: Request = Request.Builder()
                 .url(server_url + "/api/get_wallet/")
@@ -101,7 +107,11 @@ class Wallet(server_url : String){
             var json_data = JSONObject(response?.body?.string().toString())
             wallet.id = json_data.getInt("id")
             wallet.title = json_data.getString("title")
-            wallet.type = Wallets_type.get_wallets_type(server_url = server_url,id = json_data.getInt("type_id"))
+            var json_wallets_type = JSONObject(json_data.getJSONObject("type").toString())
+            wallet.type = Wallets_type(server_url = server_url)
+            wallet.type.id = json_wallets_type.getInt("id")
+            wallet.type.title = json_wallets_type.getString("title")
+            //
             wallet.update_balance()
             return wallet
         }

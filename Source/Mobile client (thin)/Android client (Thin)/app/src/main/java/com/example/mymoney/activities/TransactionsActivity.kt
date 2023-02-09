@@ -30,6 +30,11 @@ class TransactionsActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
+    override fun onResume() {
+        super.onResume()
+        update_data()
+    }
+
     fun update_list(){
         sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
         binding.transactions.adapter = TransactionAdapter(transactions_list).also {

@@ -28,7 +28,7 @@ class Transaction(server_url : String = ""){
         json_data.put("cost_item_id",this.cost_item.id)
         //
         val http_request: Request = Request.Builder()
-            .url(server_url + "/api/update_transaction")
+            .url(server_url + "/api/update_transaction/")
             .post(json_data.toString().toRequestBody("application/json".toMediaType()))
             .build()
         var call = http_client.newCall(http_request)

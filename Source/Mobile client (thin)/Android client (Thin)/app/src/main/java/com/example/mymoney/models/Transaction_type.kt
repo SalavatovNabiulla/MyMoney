@@ -66,8 +66,10 @@ class Transaction_type(server_url : String){
         fun get_transactions_type(server_url: String = "", id: Int = 0,title: String = ""): Transaction_type {
             var transactions_type = Transaction_type(server_url)
             //
+
             var json = JSONObject()
             json.put("id",id)
+            json.put("title",title)
             //
             val http_request: Request = Request.Builder()
                 .url(server_url + "/api/get_transactions_type/")

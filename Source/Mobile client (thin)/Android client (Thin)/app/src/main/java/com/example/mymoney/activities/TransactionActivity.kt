@@ -3,6 +3,7 @@ package com.example.mymoney.activities
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.provider.Settings.Global
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mymoney.databinding.ActivityTransactionBinding
@@ -17,7 +18,7 @@ class TransactionActivity : AppCompatActivity() {
     var wallets = ArrayList<Wallet>()
     var revenue_items = ArrayList<Revenue_item>()
     var cost_items = ArrayList<Cost_item>()
-    lateinit var transaction: Transaction
+    lateinit var current_transaction: Transaction
     lateinit var sharedPref : SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,13 +33,25 @@ class TransactionActivity : AppCompatActivity() {
     }
 
     fun save_transaction(){
-        if(transaction.id != 0){
-            //
-        }else{
-//            binding.transactionTypeEdit.setText(transaction.type_id.toString())
-//            binding.transactionWalletEdit.setText(transaction.wallet_id.toString())
-//            binding.transactionSumEdit.setText(transaction.sum.toString())
-//            binding.transactionItemEdit.setText(transaction.type_id.toString())
+        GlobalScope.launch {
+            sharedPref = getSharedPreferences("settings", Context.MODE_PRIVATE)
+            var server_url = sharedPref.getString("server_ip","0.0.0.0").toString()
+            current_transaction.type = Transaction_type.get_transactions_type(server_url = server_url, title = binding.transactionTypeEdit.text.toString())
+            current_transaction.wallet = Wallet.get_wallet(server_url = server_url, title = binding.transactionWalletEdit.text.toString())
+            current_transaction.sum = binding.transactionSumEdit.text.toString().toInt()
+            current_transaction.cost_item = Cost_item(server_url=server_url)
+            current_transaction.revenue_item = Revenue_item(server_url = server_url)
+            if (binding.transactionItemEdit.text.toString() == "income"){
+                current_transaction.revenue_item = Revenue_item.get_revenue_item(server_url=server_url, title = binding.transactionItemEdit.text.toString())
+            }else if (binding.transactionItemEdit.text.toString() == "expense"){
+                current_transaction.cost_item = Cost_item.get_cost_item(server_url=server_url, title = binding.transactionItemEdit.text.toString())
+            }
+            if (current_transaction.id != 0){
+                current_transaction.update()
+            }else{
+                current_transaction.create()
+            }
+            finish()
         }
     }
 
@@ -73,7 +86,7 @@ class TransactionActivity : AppCompatActivity() {
     fun select_wallet(){
         var options = arrayListOf<String>()
         for(i in wallets){
-            options.add(i.title.toString() +" - "+ i.balance.toString())
+            options.add(i.title.toString())
         }
         var type_dialog = AlertDialog.Builder(this)
         var index = 0
@@ -145,7 +158,7 @@ class TransactionActivity : AppCompatActivity() {
     }
 
     fun get_current_transaction(){
-        transaction = Transaction.get_transaction(server_url = sharedPref.getString("server_ip","0.0.0.0").toString(),id=intent.getIntExtra("EXTRA_ID",0))
+        current_transaction = Transaction.get_transaction(server_url = sharedPref.getString("server_ip","0.0.0.0").toString(),id=intent.getIntExtra("EXTRA_ID",0))
     }
 
     fun update_data(){
@@ -156,11 +169,11 @@ class TransactionActivity : AppCompatActivity() {
             get_cost_items()
             get_current_transaction()
             runOnUiThread{
-                if(transaction.id != 0){
-                    binding.transactionIdEdit.setText(transaction.id.toString())
-                    binding.transactionTypeEdit.setText(transaction.type.title.toString())
-                    binding.transactionWalletEdit.setText(transaction.wallet.title.toString())
-                    binding.transactionSumEdit.setText(transaction.sum.toString())
+                if(current_transaction.id != 0){
+                    binding.transactionIdEdit.setText(current_transaction.id.toString())
+                    binding.transactionTypeEdit.setText(current_transaction.type.title.toString())
+                    binding.transactionWalletEdit.setText(current_transaction.wallet.title.toString())
+                    binding.transactionSumEdit.setText(current_transaction.sum.toString())
                 }
             }
         }

@@ -21,6 +21,7 @@ class TransactionAdapter(
 
     var server_ip = "0.0.0.0"
 
+
     lateinit var context: Context
 
     class ViewHolder(view: View,server_ip : String = "") : RecyclerView.ViewHolder(view) {
@@ -30,6 +31,7 @@ class TransactionAdapter(
         val sum_text : TextView
         val cost_revenue_item_text : TextView
         var server_ip = server_ip
+        var last_tap : Long = 0
         init {
             id_text = view.findViewById(R.id.id_text)
             type_text = view.findViewById(R.id.type_text)
@@ -40,6 +42,19 @@ class TransactionAdapter(
     }
 
     fun onItemClick(view : ViewHolder){
+
+        var current_tap = System.currentTimeMillis()
+        var duration = (current_tap - view.last_tap)
+        view.last_tap = current_tap
+        if(duration < 500){double_click_listener(view)}else{one_click_listener(view)}
+
+    }
+
+    fun one_click_listener(view: ViewHolder){
+        //
+    }
+
+    fun double_click_listener(view: ViewHolder){
         var id = view.id_text.text.toString()
         GlobalScope.launch {
             var Intent = Intent(context,TransactionActivity::class.java)
