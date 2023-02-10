@@ -37,6 +37,21 @@ class MainMenuActivity : AppCompatActivity() {
                 startActivity(it)
             }
         }
+        binding.walletsTypesButton.setOnClickListener {
+            Intent(this,WalletsTypesActivity::class.java).also {
+                startActivity(it)
+            }
+        }
+        binding.revenueItemsButton.setOnClickListener {
+            Intent(this,RevenueItemsActivity::class.java).also {
+                startActivity(it)
+            }
+        }
+        binding.costItemsButton.setOnClickListener {
+            Intent(this,CostItemsActivity::class.java).also {
+                startActivity(it)
+            }
+        }
         //
         setContentView(binding.root)
     }

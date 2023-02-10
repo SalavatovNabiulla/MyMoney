@@ -15,6 +15,12 @@
         <activity android:name=".activities.TransactionActivity"/>
         <activity android:name=".activities.WalletsActivity"/>
         <activity android:name=".activities.WalletActivity"/>
+        <activity android:name=".activities.WalletsTypeActivity"/>
+        <activity android:name=".activities.WalletsTypesActivity"/>
+        <activity android:name=".activities.CostItemActivity"/>
+        <activity android:name=".activities.CostItemsActivity"/>
+        <activity android:name=".activities.RevenueItemActivity"/>
+        <activity android:name=".activities.RevenueItemsActivity"/>
         <activity
             android:name=".activities.MainMenuActivity"
             android:exported="true">

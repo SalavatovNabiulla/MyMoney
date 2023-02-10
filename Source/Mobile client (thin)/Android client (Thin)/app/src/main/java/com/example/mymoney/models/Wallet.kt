@@ -74,20 +74,23 @@ class Wallet(server_url : String){
                 .build()
             var call = http_client.newCall(http_request)
             var response = call.execute()
-            var json_data = JSONArray(response?.body?.string().toString())
-            for(i in 0..json_data.length()-1){
-                var current_object = JSONObject(json_data.get(i).toString())
-                var new_wallet = Wallet(server_url)
-                new_wallet.id = current_object.getInt("id")
-                new_wallet.title = current_object.getString("title")
-                //
-                var json_wallets_type = JSONObject(current_object.getJSONObject("type").toString())
-                new_wallet.type = Wallets_type(server_url = server_url)
-                new_wallet.type.id = json_wallets_type.getInt("id")
-                new_wallet.type.title = json_wallets_type.getString("title")
-                //
-                new_wallet.update_balance()
-                wallets.add(new_wallet)
+            if(response.code == 200) {
+                var json_data = JSONArray(response?.body?.string().toString())
+                for (i in 0..json_data.length() - 1) {
+                    var current_object = JSONObject(json_data.get(i).toString())
+                    var new_wallet = Wallet(server_url)
+                    new_wallet.id = current_object.getInt("id")
+                    new_wallet.title = current_object.getString("title")
+                    //
+                    var json_wallets_type =
+                        JSONObject(current_object.getJSONObject("type").toString())
+                    new_wallet.type = Wallets_type(server_url = server_url)
+                    new_wallet.type.id = json_wallets_type.getInt("id")
+                    new_wallet.type.title = json_wallets_type.getString("title")
+                    //
+                    new_wallet.update_balance()
+                    wallets.add(new_wallet)
+                }
             }
             return wallets
         }
@@ -104,15 +107,17 @@ class Wallet(server_url : String){
                 .build()
             var call = http_client.newCall(http_request)
             var response = call.execute()
-            var json_data = JSONObject(response?.body?.string().toString())
-            wallet.id = json_data.getInt("id")
-            wallet.title = json_data.getString("title")
-            var json_wallets_type = JSONObject(json_data.getJSONObject("type").toString())
-            wallet.type = Wallets_type(server_url = server_url)
-            wallet.type.id = json_wallets_type.getInt("id")
-            wallet.type.title = json_wallets_type.getString("title")
-            //
-            wallet.update_balance()
+            if(response.code == 200) {
+                var json_data = JSONObject(response?.body?.string().toString())
+                wallet.id = json_data.getInt("id")
+                wallet.title = json_data.getString("title")
+                var json_wallets_type = JSONObject(json_data.getJSONObject("type").toString())
+                wallet.type = Wallets_type(server_url = server_url)
+                wallet.type.id = json_wallets_type.getInt("id")
+                wallet.type.title = json_wallets_type.getString("title")
+                //
+                wallet.update_balance()
+            }
             return wallet
         }
     }

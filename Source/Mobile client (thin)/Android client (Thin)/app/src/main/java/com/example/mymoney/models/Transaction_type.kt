@@ -52,13 +52,15 @@ class Transaction_type(server_url : String){
                 .build()
             var call = http_client.newCall(http_request)
             var response = call.execute()
-            var json_data = JSONArray(response?.body?.string().toString())
-            for(i in 0..json_data.length()-1){
-                var current_object = JSONObject(json_data.get(i).toString())
-                var transactions_type = Transaction_type(server_url)
-                transactions_type.id = current_object.getInt("id")
-                transactions_type.title = current_object.getString("title")
-                transactions_types.add(transactions_type)
+            if(response.code == 200) {
+                var json_data = JSONArray(response?.body?.string().toString())
+                for (i in 0..json_data.length() - 1) {
+                    var current_object = JSONObject(json_data.get(i).toString())
+                    var transactions_type = Transaction_type(server_url)
+                    transactions_type.id = current_object.getInt("id")
+                    transactions_type.title = current_object.getString("title")
+                    transactions_types.add(transactions_type)
+                }
             }
             return transactions_types
         }
@@ -77,9 +79,11 @@ class Transaction_type(server_url : String){
                 .build()
             var call = http_client.newCall(http_request)
             var response = call.execute()
-            var json_data = JSONObject(response?.body?.string().toString())
-            transactions_type.id = json_data.getInt("id")
-            transactions_type.title = json_data.getString("title")
+            if(response.code == 200) {
+                var json_data = JSONObject(response?.body?.string().toString())
+                transactions_type.id = json_data.getInt("id")
+                transactions_type.title = json_data.getString("title")
+            }
             return transactions_type
         }
     }

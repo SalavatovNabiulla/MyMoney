@@ -3,17 +3,13 @@ package com.example.mymoney.activities
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.provider.Settings.Global
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.mymoney.databinding.ActivityTransactionBinding
 import com.example.mymoney.databinding.ActivityWalletBinding
-import com.example.mymoney.databinding.ActivityWalletsBinding
 import com.example.mymoney.models.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 class WalletActivity : AppCompatActivity() {
     private lateinit var binding : ActivityWalletBinding
@@ -99,8 +95,7 @@ class WalletActivity : AppCompatActivity() {
         }
         type_dialog.setPositiveButton("Подтвердить"){_,_ ->
             binding.walletTypeEdit.setText(options[index])
-            current_wallet.type.id = wallet_types[index].id
-            current_wallet.type.title = wallet_types[index].title
+            current_wallet.type = wallet_types[index]
             set_availability()
         }
         type_dialog.setNegativeButton("Отмена"){_,_ ->

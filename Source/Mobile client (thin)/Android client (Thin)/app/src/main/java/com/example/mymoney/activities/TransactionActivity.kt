@@ -170,8 +170,7 @@ class TransactionActivity : AppCompatActivity() {
         }
         type_dialog.setPositiveButton("Подтвердить"){_,_ ->
             binding.transactionTypeEdit.setText(options[index])
-            current_transaction.type.id = transaction_types[index].id
-            current_transaction.type.title = transaction_types[index].title
+            current_transaction.type = transaction_types[index]
             current_transaction.cost_item.id = 0
             current_transaction.cost_item.title = ""
             current_transaction.revenue_item.id = 0

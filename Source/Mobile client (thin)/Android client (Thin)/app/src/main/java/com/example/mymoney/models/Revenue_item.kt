@@ -64,13 +64,15 @@ class Revenue_item(server_url : String){
                 .build()
             var call = http_client.newCall(http_request)
             var response = call.execute()
-            var json_data = JSONArray(response?.body?.string().toString())
-            for(i in 0..json_data.length()-1){
-                var current_object = JSONObject(json_data.get(i).toString())
-                var new_revenue_item = Revenue_item(server_url)
-                new_revenue_item.id = current_object.getInt("id")
-                new_revenue_item.title = current_object.getString("title")
-                revenue_items.add(new_revenue_item)
+            if(response.code == 200) {
+                var json_data = JSONArray(response?.body?.string().toString())
+                for (i in 0..json_data.length() - 1) {
+                    var current_object = JSONObject(json_data.get(i).toString())
+                    var new_revenue_item = Revenue_item(server_url)
+                    new_revenue_item.id = current_object.getInt("id")
+                    new_revenue_item.title = current_object.getString("title")
+                    revenue_items.add(new_revenue_item)
+                }
             }
             return revenue_items
         }
@@ -88,9 +90,11 @@ class Revenue_item(server_url : String){
                 .build()
             var call = http_client.newCall(http_request)
             var response = call.execute()
-            var json_data = JSONObject(response?.body?.string().toString())
-            revenue_item.id = json_data.getInt("id")
-            revenue_item.title = json_data.getString("title")
+            if(response.code == 200) {
+                var json_data = JSONObject(response?.body?.string().toString())
+                revenue_item.id = json_data.getInt("id")
+                revenue_item.title = json_data.getString("title")
+            }
             return revenue_item
         }
     }

@@ -20,7 +20,7 @@ class Wallets_type(server_url : String){
         json_data.put("title",this.title)
         //
         val http_request: Request = Request.Builder()
-            .url(server_url + "/api/update_wallets_type")
+            .url(server_url + "/api/update_wallets_type/")
             .post(json_data.toString().toRequestBody("application/json".toMediaType()))
             .build()
         var call = http_client.newCall(http_request)
@@ -64,13 +64,15 @@ class Wallets_type(server_url : String){
                 .build()
             var call = http_client.newCall(http_request)
             var response = call.execute()
-            var json_data = JSONArray(response?.body?.string().toString())
-            for(i in 0..json_data.length()-1){
-                var current_object = JSONObject(json_data.get(i).toString())
-                var new_wallets_type = Wallets_type(server_url)
-                new_wallets_type.id = current_object.getInt("id")
-                new_wallets_type.title = current_object.getString("title")
-                wallets_types.add(new_wallets_type)
+            if(response.code == 200) {
+                var json_data = JSONArray(response?.body?.string().toString())
+                for (i in 0..json_data.length() - 1) {
+                    var current_object = JSONObject(json_data.get(i).toString())
+                    var new_wallets_type = Wallets_type(server_url)
+                    new_wallets_type.id = current_object.getInt("id")
+                    new_wallets_type.title = current_object.getString("title")
+                    wallets_types.add(new_wallets_type)
+                }
             }
             return wallets_types
         }
@@ -87,9 +89,11 @@ class Wallets_type(server_url : String){
                 .build()
             var call = http_client.newCall(http_request)
             var response = call.execute()
-            var json_data = JSONObject(response?.body?.string().toString())
-            wallets_type.id = json_data.getInt("id")
-            wallets_type.title = json_data.getString("title")
+            if(response.code == 200) {
+                var json_data = JSONObject(response?.body?.string().toString())
+                wallets_type.id = json_data.getInt("id")
+                wallets_type.title = json_data.getString("title")
+            }
             return wallets_type
         }
     }

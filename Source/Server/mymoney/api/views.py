@@ -246,10 +246,13 @@ def get_revenue_item(request):
     revenue_item = None
     if request.data["id"] != 0:
         revenue_item = revenue_items.objects.get(pk=request.data["id"])
+        serializer = revenue_items_serializer(revenue_item)
+        return Response(serializer.data)
     elif len(request.data["title"]) != 0:
         revenue_item = revenue_items.objects.get(title=request.data["title"])
-    serializer = revenue_items_serializer(revenue_item)
-    return Response(serializer.data)
+        serializer = revenue_items_serializer(revenue_item)
+        return Response(serializer.data)
+    return Response(status=500)
 
 @api_view(['POST'])
 def create_revenue_item(request):
@@ -288,10 +291,14 @@ def get_cost_item(request):
     cost_item = None
     if request.data["id"] != 0:
         cost_item = cost_items.objects.get(pk=request.data["id"])
+        serializer = cost_items_serializer(cost_item)
+        return Response(serializer.data)
     elif len(request.data["title"]) != 0:
         cost_item = cost_items.objects.get(title=request.data["title"])
-    serializer = cost_items_serializer(cost_item)
-    return Response(serializer.data)
+        serializer = cost_items_serializer(cost_item)
+        return Response(serializer.data)
+    return Response(status=500)
+
 
 
 @api_view(['POST'])

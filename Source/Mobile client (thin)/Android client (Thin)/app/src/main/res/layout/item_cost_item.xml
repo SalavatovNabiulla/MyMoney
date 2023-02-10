@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:background="#D1D0D0">
+
+    <TextView
+        android:id="@+id/item_cost_item_id_text"
+        android:layout_width="80dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="8dp"
+        android:background="#FFFFFF"
+        android:fontFamily="@font/montserrat_bold"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="@+id/item_cost_item_id_label"
+        app:layout_constraintStart_toEndOf="@+id/item_cost_item_id_label"
+        app:layout_constraintTop_toTopOf="@+id/item_cost_item_id_label"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/item_cost_item_title_text"
+        android:layout_width="300dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="8dp"
+        android:background="#FFFFFF"
+        android:fontFamily="@font/montserrat_bold"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="@+id/item_cost_item_title_label"
+        app:layout_constraintStart_toEndOf="@+id/item_cost_item_title_label"
+        app:layout_constraintTop_toTopOf="@+id/item_cost_item_title_label"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/item_cost_item_id_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:text="ID:"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/item_cost_item_title_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="12dp"
+        android:text="Название:"
+        android:textColor="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_cost_item_id_label" />
+</androidx.constraintlayout.widget.ConstraintLayout>

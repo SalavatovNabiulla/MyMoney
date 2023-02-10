@@ -27,14 +27,16 @@ class Wallets_balance(server_url : String){
                 .build()
             var call = http_client.newCall(http_request)
             var response = call.execute()
-            var json_data = JSONArray(response?.body?.string().toString())
-            for(i in 0..json_data.length()-1){
-                var current_object = JSONObject(json_data.get(i).toString())
-                var new_wallets_balance = Wallets_balance(server_url)
-                new_wallets_balance.id = current_object.getInt("id")
-                new_wallets_balance.balance = current_object.getInt("balance")
-                new_wallets_balance.wallet_id = current_object.getInt("wallet_id")
-                wallets_balances.add(new_wallets_balance)
+            if(response.code == 200) {
+                var json_data = JSONArray(response?.body?.string().toString())
+                for (i in 0..json_data.length() - 1) {
+                    var current_object = JSONObject(json_data.get(i).toString())
+                    var new_wallets_balance = Wallets_balance(server_url)
+                    new_wallets_balance.id = current_object.getInt("id")
+                    new_wallets_balance.balance = current_object.getInt("balance")
+                    new_wallets_balance.wallet_id = current_object.getInt("wallet_id")
+                    wallets_balances.add(new_wallets_balance)
+                }
             }
             return wallets_balances
         }
@@ -51,10 +53,12 @@ class Wallets_balance(server_url : String){
                 .build()
             var call = http_client.newCall(http_request)
             var response = call.execute()
-            var json_data = JSONObject(response?.body?.string().toString())
-            wallets_balance.id = json_data.getInt("id")
-            wallets_balance.balance = json_data.getInt("balance")
-            wallets_balance.wallet_id = json_data.getInt("wallet_id")
+            if(response.code == 200) {
+                var json_data = JSONObject(response?.body?.string().toString())
+                wallets_balance.id = json_data.getInt("id")
+                wallets_balance.balance = json_data.getInt("balance")
+                wallets_balance.wallet_id = json_data.getInt("wallet_id")
+            }
             return wallets_balance
         }
     }
