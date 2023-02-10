@@ -13,7 +13,7 @@ class Wallet(server_url : String){
     var http_client = OkHttpClient()
     //
     var id: Int = 0
-    var title: String? = null
+    var title: String = ""
     lateinit var type : Wallets_type
     var balance: Int = 0
     //
