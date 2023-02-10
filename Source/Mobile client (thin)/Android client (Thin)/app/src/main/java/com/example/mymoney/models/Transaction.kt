@@ -111,8 +111,8 @@ class Transaction(server_url : String = ""){
                 var json_transaction_cost_item = JSONObject(current_object.getJSONObject("cost_item").toString())
                 if(json_transaction_cost_item.length() != 0){
                     transaction.cost_item = Cost_item(server_url = server_url)
-                    transaction.cost_item.id = json_transaction_revenue_item.getInt("id")
-                    transaction.cost_item.title = json_transaction_revenue_item.getString("title")
+                    transaction.cost_item.id = json_transaction_cost_item.getInt("id")
+                    transaction.cost_item.title = json_transaction_cost_item.getString("title")
                 }
                 transaction.created_time = current_object.getString("created_time")
                 transactions.add(transaction)
@@ -156,8 +156,8 @@ class Transaction(server_url : String = ""){
                 var json_transaction_cost_item = JSONObject(current_object.getJSONObject("cost_item").toString())
                 if(json_transaction_cost_item.length() != 0){
                     transaction.cost_item = Cost_item(server_url = server_url)
-                    transaction.cost_item.id = json_transaction_revenue_item.getInt("id")
-                    transaction.cost_item.title = json_transaction_revenue_item.getString("title")
+                    transaction.cost_item.id = json_transaction_cost_item.getInt("id")
+                    transaction.cost_item.title = json_transaction_cost_item.getString("title")
                 }
                 transaction.created_time = current_object.getString("created_time")
             }
