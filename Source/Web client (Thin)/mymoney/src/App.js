@@ -1,24 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+import {BrowserRouter, Routes, Route, Link, NavLink} from 'react-router-dom'
+
+//pages
+import Home from './pages/Home'
+import Transactions from './pages/Transactions'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          My money web client
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <NavLink to="/">Главное</NavLink>
+      <NavLink to="transactions">Транзакции</NavLink>
+      <main>
+        <Routes>
+          <Route index element={<Home />}/>
+          <Route path="transactions" element={<Transactions />}/>
+        </Routes>
+      </main>
+    </BrowserRouter>
   );
 }
 
